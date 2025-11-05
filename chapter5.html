@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 5: Phân đoạn Ảnh</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1.2rem 0;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu công thức quá dài */
+            padding: 0.5rem 0;
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 5
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> 1. Cơ sở Lý thuyết
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> 2. Phát hiện Điểm, Đường, Cạnh
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> 3. Phân đoạn bằng Ngưỡng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> 4. Phân đoạn dựa trên Vùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> 5. Phân đoạn bằng PP Mới
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>CHƯƠNG 5: PHÂN ĐOẠN ẢNH</h1>
+                <h2>(Digital Image Processing)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Khoa:</strong> Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>1. CƠ SỞ LÝ THUYẾT (FUNDAMENTALS)</h3>
+                
+                <h4>1.1 Khái niệm Phân đoạn Ảnh</h4>
+                <ul>
+                    <li><strong>Phân đoạn ảnh (Image segmentation)</strong> là quá trình chia một hình ảnh thành các vùng được kết nối (connected regions).</li>
+                    <li>Các vùng này phải có sự tương đồng nhất định bên trong vùng đó và có sự khác biệt giữa các vùng liền kề.</li>
+                    <li>Mục tiêu thường là để tìm ra các đối tượng riêng lẻ (individual objects) trong ảnh.</li>
+                </ul>
+
+                <h4>1.2 Các Phương pháp Tiếp cận Cơ bản</h4>
+                <p>Về cơ bản, có hai loại cách tiếp cận để phân đoạn ảnh:</p>
+                <ul>
+                    <li><strong>Sự ngắt quãng (Discontinuity):</strong> Dựa trên sự thay đổi đột ngột (sudden changes).
+                        <ul>
+                            <li>Điểm khác biệt này là những thay đổi đột ngột về cường độ dọc theo đường ranh giới, được gọi là <strong>cạnh (edge)</strong>.</li>
+                            <li>Sự ngắt quãng cường độ (discontinuities of intensity) bao gồm ba loại: <strong>điểm (points)</strong>, <strong>đường (lines)</strong> và <strong>cạnh (edges)</strong>.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Sự tương đồng (Similarity):</strong> Dựa trên sự giống nhau của các thuộc tính.
+                        <ul>
+                            <li>Sự tương đồng có thể do cường độ pixel, màu sắc hoặc <strong>kết cấu (texture)</strong>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>2. PHÁT HIỆN ĐIỂM, ĐƯỜNG VÀ CẠNH</h3>
+                <p>Cách phổ biến nhất để tìm kiếm sự ngắt quãng là quét một mặt nạ nhỏ (small mask) trên ảnh.</p>
+
+                <h4>2.1 Phát hiện Điểm (Point Detection)</h4>
+                <p>Để phát hiện điểm, người ta sử dụng kết hợp giữa lọc (filtering) và ngưỡng (thresholding). Một kernel $3 \times 3$ Laplacian có thể được sử dụng:</p>
+                $$
+                \begin{bmatrix}
+                1 & 1 & 1 \\
+                1 & -8 & 1 \\
+                1 & 1 & 1
+                \end{bmatrix}
+                $$
+                <p>Hàm ngưỡng chung cho bộ lọc không gian là: $g(x,y)= \begin{cases} 1 & \text{nếu } Z(x,y) > T \\ 0 & \text{khác} \end{cases}$ trong đó $T$ là ngưỡng không âm.</p>
+
+                <h4>2.2 Phát hiện Đường (Line Detection)</h4>
+                <p>Việc phát hiện đường sử dụng các kernel cụ thể (Line detection kernels) cho các hướng ngang, dọc, hoặc chéo (+45° hoặc -45°).</p>
+
+                <h4>2.3 Phát hiện Cạnh (Edge Detection)</h4>
+                <p>Các mô hình (ideal representations) của cạnh bao gồm cạnh bước (step edge), cạnh dốc (ramp edge), và cạnh mái (roof edge).</p>
+                
+                <h5>A. Đạo hàm Bậc nhất (First-order derivatives - Gradient)</h5>
+                <p>Tính toán Gradient: $I_x = G_x \otimes I$ và $I_y = G_y \otimes I$.</p>
+                <p>Độ lớn của Gradient (Magnitude):</p>
+                $$\nabla f = \sqrt{G_x^2 + G_y^2} \text{ hay } S = \sqrt{I_x^2 + I_y^2}$$
+                <p>Hướng của Gradient (Direction):</p>
+                $$\alpha(x,y) = \tan^{-1} \left( \frac{G_y}{G_x} \right)$$
+                
+                <p><strong>Các Toán tử Gradient phổ biến:</strong></p>
+                <p><strong>Toán tử Sobel:</strong></p>
+                $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}, \quad G_y = \begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$$
+                
+                <p><strong>Toán tử Robert (Roberts cross-gradient operators):</strong></p>
+                $$G_x = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}, \quad G_y = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$$
+                
+                <p><strong>Toán tử Prewitt:</strong></p>
+                $$G_x = \begin{bmatrix} -1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 \end{bmatrix}, \quad G_y = \begin{bmatrix} -1 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & 1 & 1 \end{bmatrix}$$
+
+                <h5>B. Đạo hàm Bậc hai (Second-order derivatives - Laplacian)</h5>
+                <p>Toán tử Laplacian của hàm 2D $f(x,y)$ được định nghĩa là:</p>
+                $$\nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}$$
+                <p>Laplacian của Gaussian (LoG), hay hàm Mexican hat, được tính bằng cách làm mịn ảnh bằng Gaussian, sau đó áp dụng Laplacian.</p>
+
+                <h4>2.4 Liên kết Cạnh và Phát hiện Ranh giới (Edge Linking)</h4>
+                <p><strong>Xử lý cục bộ (Local processing):</strong></p>
+                <p>Các điểm cạnh liền kề được liên kết nếu chúng có độ lớn và hướng tương tự nhau. Pixel cạnh $(x_0, y_0)$ tương tự $(x,y)$ nếu:</p>
+                <ul>
+                    <li>$|\nabla f(x, y) - \nabla(x_0, y_0)| \leq E$</li>
+                    <li>$|\alpha(x, y) - \alpha(x_0, y_0)| < A$</li>
+                </ul>
+                <p><strong>Xử lý toàn cục (Global processing) qua Biến đổi Hough (Hough Transform):</strong></p>
+                <p>Là một cách để tìm các điểm cạnh nằm dọc theo một đường thẳng ($y_i = a x_i + b$). Quá trình này tích lũy các cặp $(\theta, \rho)$ trong một biểu đồ tần suất 2D (accumulator array) để tìm đường thẳng đi qua nhiều điểm nhất.</p>
+            </section>
+            
+            <section id="muc3" class="content-section">
+                <h3>3. PHÂN ĐOẠN BẰNG NGƯỠNG (THRESHOLDING)</h3>
+                <p>Phân đoạn bằng ngưỡng dựa trên giả định rằng phạm vi mức cường độ của đối tượng khác biệt so với nền (background).</p>
+                
+                <h4>3.1 Các loại Ngưỡng cơ bản</h4>
+                <p><strong>Ngưỡng đơn (Single threshold):</strong></p>
+                $$g(x, y) = \begin{cases} 1 & \text{nếu } f(x, y) > T \\ 0 & \text{nếu } f(x, y) \leq T \end{cases}$$
+                
+                <p><strong>Ngưỡng kép (Double threshold):</strong></p>
+                $$g(x, y) = \begin{cases} a & \text{nếu } f(x, y) > T_2 \\ b & \text{nếu } T_1 < f(x, y) \leq T_2 \\ c & \text{nếu } f(x, y) \leq T_1 \end{cases}$$
+                
+                <h4>3.2 Phân ngưỡng Toàn cục Tự động (Automatic Global Thresholding)</h4>
+                <p>Các bước thường thấy: Xử lý ảnh -> Thu được biểu đồ -> Tính toán ngưỡng $T$ -> Áp dụng $T$ để tạo ảnh nhị phân.</p>
+                
+                <h4>3.3 Phân ngưỡng Thích nghi (Adaptive Thresholding)</h4>
+                <p>Ngưỡng thích nghi giải quyết vấn đề khi ánh sáng không đồng đều bằng cách chia nhỏ (subdivision) ảnh.</p>
+                
+                <h4>3.4 Phân ngưỡng Tối ưu (Optimum Thresholding)</h4>
+                <p><strong>Phương pháp Otsu:</strong> Tìm kiếm ngưỡng ($t$) để giảm thiểu phương sai nội lớp (intra-class variance), hoặc tương đương là tối đa hóa phương sai giữa các lớp ($\sigma_b^2(t)$).</p>
+                <p>Thuật toán Otsu tìm $t$ sao cho giá trị sau là tối đa:</p>
+                $$\sigma_b^2(t) = \omega_0(t) \omega_1(t) (\mu_0(t) - \mu_1(t))^2$$
+            </section>
+
+            <section id="muc4" class="content-section">
+                <h3>4. PHÂN ĐOẠN DỰA TRÊN VÙNG (REGION-BASED SEGMENTATION)</h3>
+
+                <h4>4.1 Cơ sở</h4>
+                <ul>
+                    <li>Phân đoạn dựa trên vùng dựa trên tính kết nối (connectivity) của các pixel tương tự trong một vùng.</li>
+                    <li>Mỗi vùng phải đồng nhất (uniform).</li>
+                </ul>
+
+                <h4>4.2 Công thức cơ bản về Phân vùng</h4>
+                <p>Phân đoạn là quá trình phân vùng $R$ thành các vùng con $R_1, \dots, R_n$ sao cho:</p>
+                <ul>
+                    <li>$\bigcup_{i=1}^{n} R_i = R$ (tổng các vùng con là vùng gốc).</li>
+                    <li>$R_i$ là một vùng kết nối.</li>
+                    <li>$R_i \cap R_j = \emptyset$ với $i \neq j$ (các vùng không chồng lấn).</li>
+                    <li>$P(R_i) = TRUE$ (tính chất đồng nhất thỏa mãn).</li>
+                    <li>$P(R_i \cup R_j) = FALSE$ (không thể hợp nhất thêm).</li>
+                </ul>
+
+                <h4>4.3 Các Phương pháp Tiếp cận</h4>
+                <ul>
+                    <li><strong>Phát triển Vùng (Region Growing):</strong> Dựa trên tính kết nối. Bắt đầu từ các điểm "hạt giống" (seeds) và mở rộng ra.</li>
+                    <li><strong>Chia Vùng (Region Splitting):</strong> Ngược lại với phát triển vùng. Bắt đầu với toàn bộ ảnh, nếu không đồng nhất thì chia nhỏ (thường dùng Quadtree).</li>
+                    <li><strong>Thủ tục Chia và Hợp nhất (Split and Merge Procedure):</strong>
+                        <ol>
+                            <li><strong>Chia (Split):</strong> Chia một vùng $R_i$ thành bốn góc nếu $P(R_i) = FALSE$.</li>
+                            <li><strong>Hợp nhất (Merge):</strong> Hợp nhất bất kỳ vùng liền kề $R_j$ và $R_k$ nào mà $P(R_j \cup R_k) = TRUE$.</li>
+                        </ol>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="muc5" class="content-section">
+                <h3>5. PHÂN ĐOẠN BẰNG CÁC PHƯƠNG PHÁP MỚI</h3>
+                
+                <h4>5.1 Phân đoạn bằng Morphological Watersheds</h4>
+                <ul>
+                    <li><strong>Khái niệm Watersheds (đường phân thủy)</strong> dựa trên việc hình dung ảnh trong không gian ba chiều (tọa độ không gian so với mức xám).</li>
+                    <li>Trong cách giải thích địa hình này, có các <strong>cực tiểu khu vực (regional minimum)</strong> và <strong>lưu vực (catchment basins)</strong>.</li>
+                    <li>Mục tiêu chính là tìm các <strong>đường phân thủy (watershed lines)</strong>, hoạt động như các "đập" (dams) ngăn không cho nước từ các lưu vực khác nhau hợp nhất.</li>
+                </ul>
+
+                <h4>5.2 Chuyển động trong Phân đoạn (Motion in Segmentation)</h4>
+                <ul>
+                    <li>Sử dụng Ảnh khác biệt tích lũy (ADI - accumulative difference image).</li>
+                    <li>Kinect là một ví dụ, cung cấp cả ảnh chiều sâu (depth image) và ảnh màu RGB.</li>
+                </ul>
+            </section>
+
+            <div class="analogy-box">
+                <h5><i class="bi bi-lightbulb-fill"></i> Liên hệ Thực tiễn (Dùng phép so sánh)</h5>
+                <p>Phân đoạn ảnh giống như việc sử dụng các dụng cụ khác nhau trong bếp để tách các thành phần của một món ăn hỗn hợp.</p>
+                <ul>
+                    <li><strong>Phát hiện Cạnh (Edge Detection)</strong> giống như dùng dao để cắt theo đường viền (discontinuity), chỉ tập trung vào ranh giới giữa các nguyên liệu.</li>
+                    <li><strong>Phân ngưỡng (Thresholding)</strong> giống như dùng rây lọc để tách các nguyên liệu dựa trên độ đậm nhạt (cường độ) - ví dụ, tách hạt tiêu đen khỏi bột mì trắng.</li>
+                    <li><strong>Phân đoạn dựa trên Vùng (Region Growing)</strong> giống như dùng tay bốc riêng các miếng rau có cùng màu sắc và kết cấu ra khỏi món trộn, tập trung vào tính kết nối và sự đồng nhất của miếng đó.</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

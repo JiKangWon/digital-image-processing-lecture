@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 1: Giới thiệu về Xử lý ảnh Kỹ thuật số</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        /* CSS tùy chỉnh để làm giao diện "bắt mắt" hơn */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6; /* Màu nền xám rất nhạt */
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto; /* Cho phép cuộn nếu mục lục quá dài */
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3; /* Màu xanh chủ đạo */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem; /* Padding lớn cho không gian đọc */
+            max-width: calc(100% - 300px);
+        }
+
+        /* Tiêu đề chính của bài giảng */
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Thông tin giảng viên */
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        /* Định dạng các phần nội dung */
+        .content-section {
+            margin-bottom: 3.5rem; /* Khoảng cách giữa các mục I, II, III... */
+        }
+
+        .content-section h3 {
+            /* Tiêu đề la mã (I, II, III...) */
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            /* Tiêu đề con (1, 2, 3...) */
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd; /* Màu xanh sáng hơn */
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Định dạng danh sách */
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Bảng */
+        .table {
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: #0056b3;
+            color: white;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8faff; /* Màu sọc cho bảng */
+        }
+
+        /* Hộp ghi chú đặc biệt */
+        .note-box {
+            background: #fffbe6;
+            border-left: 5px solid #ffeb3b;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .note-box strong {
+            color: #b8860b;
+        }
+
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* Định dạng cho code */
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto; /* Tắt sticky trên mobile */
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .sidebar .sidebar-sticky-top {
+                padding: 1rem 1.5rem;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+            .lecture-header h2 {
+                font-size: 1.5rem;
+            }
+            .content-section h3 {
+                font-size: 1.8rem;
+            }
+            .content-section h4 {
+                font-size: 1.4rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 1
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> I. Giới thiệu về Xử lý ảnh
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> II. Các Khái niệm Cơ bản
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> III. Các Giai đoạn Xử lý ảnh
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> IV. Các Thành phần của hệ thống
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> V. Giới thiệu về OpenCV
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc6">
+                            <i class="bi bi-chevron-right"></i> VI. Bài tập
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>Chương 1: Giới thiệu về Xử lý ảnh Kỹ thuật số</h1>
+                <h2>Môn học: Xử lý ảnh kỹ thuật số (Digital Image Processing - DIP)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Đơn vị:</strong> Khoa Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>I. GIỚI THIỆU VỀ XỬ LÝ ẢNH (INTRODUCTION TO DIP)</h3>
+                
+                <h4>1. Định nghĩa và Bản chất</h4>
+                <ul>
+                    <li><strong>Xử lý ảnh kỹ thuật số (DIP)</strong> là một phương pháp để thực hiện một số <strong>phép toán trên ảnh</strong> nhằm mục đích thu được <strong>ảnh được cải thiện</strong> hoặc <strong>trích xuất thông tin hữu ích</strong> từ ảnh.</li>
+                    <li>DIP là một loại <strong>xử lý tín hiệu</strong> (signal processing) trong đó đầu vào là một ảnh và đầu ra có thể là <strong>ảnh</strong> hoặc <strong>các đặc trưng/tính chất</strong> liên quan đến ảnh đó.</li>
+                    <li>Xử lý ảnh là một trong những công nghệ đang phát triển nhanh chóng và hình thành nên khu vực nghiên cứu cốt lõi trong các lĩnh vực kỹ thuật và khoa học máy tính.</li>
+                </ul>
+
+                <h4>2. Các Bước Cơ bản trong Xử lý ảnh</h4>
+                <p>Xử lý ảnh về cơ bản bao gồm ba bước sau:</p>
+                <ol>
+                    <li><strong>Nhập ảnh</strong> thông qua các công cụ thu thập ảnh (Image acquisition tools).</li>
+                    <li><strong>Phân tích và thao tác</strong> với ảnh (Analyzing and manipulating the image).</li>
+                    <li><strong>Đầu ra</strong> (Output) là ảnh đã được thay đổi hoặc một báo cáo dựa trên phân tích ảnh.</li>
+                </ol>
+
+                <h4>3. Phân loại Phương pháp</h4>
+                <p>Có hai loại phương pháp xử lý ảnh:</p>
+                <ol>
+                    <li><strong>Xử lý ảnh Analog</strong> (Analogue image processing).</li>
+                    <li><strong>Xử lý ảnh Kỹ thuật số</strong> (Digital image processing).
+                        <ul>
+                            <li>Các kỹ thuật xử lý ảnh kỹ thuật số giúp thao tác với các ảnh kỹ thuật số bằng cách sử dụng máy tính.</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4>4. Ba Pha Tổng quát trong Kỹ thuật Số</h4>
+                <p>Tất cả các loại dữ liệu đều phải trải qua ba pha tổng quát khi sử dụng kỹ thuật số:</p>
+                <ol>
+                    <li><strong>Tiền xử lý</strong> (Preprocessing).</li>
+                    <li><strong>Cải thiện ảnh</strong> (Enhancement image).</li>
+                    <li><strong>Hiển thị, trích xuất thông tin</strong> (Display, information extraction).</li>
+                </ol>
+
+                <h4>5. Ứng dụng của DIP</h4>
+                <p>Việc sử dụng các kỹ thuật xử lý ảnh kỹ thuật số đã bùng nổ kể từ những năm 1980 và hiện được áp dụng cho mọi loại tác vụ trong nhiều lĩnh vực khác nhau. Các ứng dụng tiêu biểu bao gồm:</p>
+                <ul>
+                    <li><strong>Làm sắc nét và phục hồi ảnh</strong> (Image sharpening and restoration).</li>
+                    <li><strong>Kiểm tra tự động</strong>, ví dụ trong các ứng dụng sản xuất (Automatic inspection).</li>
+                    <li>Hỗ trợ con người, ví dụ hệ thống nhận dạng loài (species identification system).</li>
+                    <li>Kiểm soát quy trình, ví dụ robot công nghiệp (industrial robot).</li>
+                    <li>Phát hiện sự kiện, ví dụ giám sát hoặc đếm người (surveillance or people counting).</li>
+                    <li>Tương tác, ví dụ như đầu vào cho thiết bị giao tiếp người-máy (CHI).</li>
+                    <li>Mô hình hóa đối tượng, ví dụ phân tích ảnh y tế (medical image analysis).</li>
+                    <li>Điều hướng, ví dụ phương tiện tự hành, robot di động (autonomous vehicle, mobile robot).</li>
+                    <li>Tổ chức thông tin, ví dụ lập chỉ mục cơ sở dữ liệu ảnh.</li>
+                    <li><strong>Hiệu ứng nghệ thuật</strong> (Artistic effects).</li>
+                    <li><strong>Trực quan hóa y tế</strong> (Medical visualisation).</li>
+                    <li><strong>Thi hành luật</strong> (Law enforcement).</li>
+                </ul>
+
+                <h4>6. Lịch sử Phát triển của DIP</h4>
+                <ul>
+                    <li><strong>Đầu những năm 1920:</strong> Một trong những ứng dụng đầu tiên của hình ảnh kỹ thuật số là trong ngành công nghiệp báo chí thông qua <strong>dịch vụ truyền hình ảnh bằng cáp Bartlane</strong>.</li>
+                    <li><strong>Giữa đến cuối những năm 1920:</strong> Hệ thống Bartlane được cải tiến, dẫn đến chất lượng ảnh cao hơn (Ví dụ: ảnh kỹ thuật số 15 tông màu đời đầu).</li>
+                    <li><strong>Những năm 1960:</strong> Sự phát triển của công nghệ máy tính và cuộc chạy đua không gian đã dẫn đến sự gia tăng mạnh mẽ công việc trong xử lý ảnh kỹ thuật số. Năm 1964, máy tính được sử dụng để cải thiện chất lượng ảnh Mặt Trăng chụp bởi tàu thăm dò <strong>Ranger 7</strong>.</li>
+                    <li><strong>Những năm 1970:</strong> Xử lý ảnh kỹ thuật số bắt đầu được sử dụng trong các ứng dụng y tế. Năm 1979, Sir Godfrey N. Hounsfield & Prof. Allan M. Cormack chia sẻ giải Nobel Y học cho phát minh về <strong>chụp cắt lớp</strong> (tomography), công nghệ đằng sau quét <strong>CAT</strong> (Computerised Axial Tomography).</li>
+                    <li><strong>Những năm 1980 - Ngày nay:</strong> Việc sử dụng các kỹ thuật xử lý ảnh kỹ thuật số bùng nổ và được sử dụng rộng rãi cho mọi loại tác vụ.</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>II. CÁC KHÁI NIỆM CƠ BẢN (CONCEPTS)</h3>
+
+                <h4>1. Ảnh Kỹ thuật số (Digital Images)</h4>
+                <ul>
+                    <li><strong>Ảnh</strong> là một hàm hai chiều <code>f(x,y)</code>, trong đó <code>x</code> và <code>y</code> là <strong>tọa độ không gian</strong> (mặt phẳng), và biên độ của <code>f</code> tại bất kỳ cặp tọa độ <code>(x,y)</code> nào được gọi là <strong>cường độ</strong> của ảnh tại mức đó.</li>
+                    <li>Nếu <code>x</code>, <code>y</code> và các giá trị biên độ của <code>f</code> là các đại lượng <strong>hữu hạn và rời rạc</strong>, chúng ta gọi ảnh đó là <strong>ảnh kỹ thuật số</strong>.</li>
+                    <li>Ảnh kỹ thuật số bao gồm một số hữu hạn các phần tử gọi là <strong>pixel</strong>, mỗi pixel có một vị trí và giá trị cụ thể.</li>
+                    <li>Ảnh có thể được coi là <strong>hàm 2D</strong> hoặc một <strong>ma trận</strong> với các hàng (rows) và cột (columns).</li>
+                    <li>Trong biểu diễn <strong>8-bit</strong>, giá trị cường độ pixel thường thay đổi giữa <strong>0 (Đen)</strong> và <strong>255 (Trắng)</strong>.</li>
+                </ul>
+                <div class="note-box">
+                    <strong>Lưu ý:</strong> Số hóa ngụ ý rằng ảnh kỹ thuật số là một phép <strong>xấp xỉ</strong> của cảnh thực.
+                </div>
+
+                <h4>2. Nguồn gốc của Ảnh Kỹ thuật số</h4>
+                <p>Nguồn chính của hình ảnh kỹ thuật số là <strong>phổ năng lượng điện từ (EM)</strong>. Các ví dụ về hình ảnh dựa trên Phổ EM bao gồm:</p>
+                <ul>
+                    <li>Tia Gamma (Gamma-Ray Imaging).</li>
+                    <li>Tia X (X-ray images, ví dụ: chụp X-quang ngực, chụp CT đầu).</li>
+                    <li>Tia Cực tím (Ultraviolet images).</li>
+                    <li>Ánh sáng nhìn thấy (Visible light images).</li>
+                    <li>Tia hồng ngoại ("thermal" infrared images).</li>
+                    <li>Sóng vi ba (Microwave images, ví dụ: Synthetic Aperture Radar System).</li>
+                    <li>Sóng vô tuyến (Radio wave images, ví dụ: ảnh MRI từ não).</li>
+                    <li>Ngoài ra còn có <strong>Hình ảnh Siêu âm</strong> (Ultrasonic spectrum, ví dụ: ảnh siêu âm em bé).</li>
+                </ul>
+
+                <h4>3. Sự Liên tục giữa Xử lý ảnh và Thị giác Máy tính (Computer Vision)</h4>
+                <p>Quá trình này có thể được chia thành các cấp độ xử lý:</p>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Cấp độ</th>
+                            <th>Đầu vào (Input)</th>
+                            <th>Đầu ra (Output)</th>
+                            <th>Ví dụ (Examples)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cấp thấp (Low Level)</strong></td>
+                            <td>Ảnh (Image)</td>
+                            <td>Ảnh (Image)</td>
+                            <td>Loại bỏ nhiễu (Noise removal), làm sắc nét ảnh (image sharpening).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cấp trung (Mid Level)</strong></td>
+                            <td>Ảnh (Image)</td>
+                            <td>Thuộc tính (Attributes)</td>
+                            <td>Nhận dạng đối tượng (Object recognition), phân đoạn (segmentation).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cấp cao (High Level)</strong></td>
+                            <td>Thuộc tính (Attributes)</td>
+                            <td>Sự hiểu biết (Understanding)</td>
+                            <td>Hiểu cảnh (Scene understanding), điều hướng tự hành (autonomous navigation).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="muc3" class="content-section">
+                <h3>III. CÁC GIAI ĐOẠN CHÍNH TRONG XỬ LÝ ẢNH KỸ THUẬT SỐ (KEY STAGES IN DIP)</h3>
+                <p>Các giai đoạn này thường được thực hiện tuần tự hoặc lặp đi lặp lại trong một hệ thống xử lý ảnh:</p>
+                <ol>
+                    <li><strong>Thu thập ảnh (Image Acquisition):</strong> Thu thập dữ liệu ảnh.</li>
+                    <li><strong>Cải thiện ảnh (Image Enhancement):</strong> Làm cho ảnh dễ hiểu hoặc dễ nhìn hơn.</li>
+                    <li><strong>Phục hồi ảnh (Image Restoration):</strong> Cố gắng khôi phục lại ảnh ban đầu bị suy thoái bằng các mô hình toán học.</li>
+                    <li><strong>Xử lý Hình thái học (Morphological Processing):</strong> Xử lý hình dạng đối tượng.</li>
+                    <li><strong>Phân đoạn (Segmentation):</strong> Phân chia ảnh thành các vùng hoặc đối tượng cấu thành.</li>
+                    <li><strong>Biểu diễn & Mô tả (Representation & Description):</strong> Biểu diễn dữ liệu sau phân đoạn và mô tả các thuộc tính của đối tượng.</li>
+                    <li><strong>Nhận dạng đối tượng (Object Recognition):</strong> Gán nhãn cho một đối tượng dựa trên thông tin mô tả.</li>
+                    <li><strong>Xử lý ảnh màu (Colour Image Processing):</strong> Các kỹ thuật xử lý màu.</li>
+                    <li><strong>Nén ảnh (Image Compression):</strong> Giảm dung lượng lưu trữ cần thiết để lưu trữ hoặc truyền ảnh.</li>
+                    <li><strong>Miền Vấn đề (Problem Domain):</strong> Khu vực ứng dụng thực tế.</li>
+                </ol>
+            </section>
+
+            <section id="muc4" class="content-section">
+                <h3>IV. CÁC THÀNH PHẦN CỦA HỆ THỐNG XỬ LÝ ẢNH (COMPONENTS OF IP SYSTEMS)</h3>
+                <p>Một hệ thống xử lý ảnh đa năng (general-purpose) bao gồm các thành phần sau:</p>
+                <ol>
+                    <li><strong>Cảm biến vật lý (Physical sensor) và Bộ số hóa (Digitizer):</strong>
+                        <ul>
+                            <li>Cảm biến vật lý phản ứng với năng lượng bức xạ từ đối tượng cần chụp.</li>
+                            <li>Bộ số hóa là thiết bị chuyển đổi đầu ra của thiết bị cảm biến thành dạng kỹ thuật số.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Phần cứng xử lý ảnh chuyên biệt:</strong>
+                        <ul>
+                            <li>Đơn vị logic số học (ALU), thực hiện các phép toán số học và logic <strong>song song</strong> trên toàn bộ ảnh.</li>
+                            <li>GPU.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Máy tính:</strong> Là máy tính đa năng, có thể là PC đến siêu máy tính.</li>
+                    <li><strong>Phần mềm:</strong> Bao gồm các mô-đun chuyên biệt thực hiện các tác vụ cụ thể.</li>
+                    <li><strong>Bộ lưu trữ dung lượng lớn (Mass storage):</strong> Là một yếu tố bắt buộc trong các ứng dụng xử lý ảnh.</li>
+                    <li><strong>Thiết bị hiển thị ảnh (Image displays):</strong> Hiện nay chủ yếu là màn hình phẳng màu.</li>
+                    <li><strong>Thiết bị sao chụp (Hardcopy devices):</strong> Bao gồm máy in laser, máy ảnh phim, các đơn vị kỹ thuật số.</li>
+                    <li><strong>Mạng (Networking) và giao tiếp đám mây (cloud communication):</strong> Gần như là chức năng mặc định trong hệ thống máy tính ngày nay.</li>
+                </ol>
+            </section>
+
+            <section id="muc5" class="content-section">
+                <h3>V. GIỚI THIỆU VỀ OPENCV (OPEN SOURCE COMPUTER VISION LIBRARY)</h3>
+                
+                <h4>1. Tổng quan</h4>
+                <ul>
+                    <li><strong>OpenCV</strong> (Open Source Computer Vision Library, trang web: <a href="http://opencv.org" target="_blank">http://opencv.org</a>) là một thư viện mã nguồn mở bao gồm hàng trăm thuật toán thị giác máy tính.</li>
+                    <li>Thư viện này có cấu trúc <strong>mô-đun</strong> (modular structure) và bao gồm một số thư viện dùng chung hoặc tĩnh.</li>
+                </ul>
+
+                <h4>2. Các Mô-đun Chính</h4>
+                <p>OpenCV bao gồm nhiều mô-đun, tiêu biểu như:</p>
+                <ul>
+                    <li><strong>Chức năng cốt lõi (core):</strong> Định nghĩa các cấu trúc dữ liệu cơ bản, bao gồm mảng đa chiều dày đặc <code>Mat</code> và các hàm cơ bản được sử dụng bởi tất cả các mô-đun khác.</li>
+                    <li><strong>Xử lý ảnh (imgproc):</strong> Bao gồm lọc ảnh tuyến tính và phi tuyến tính, các phép biến đổi hình học (resize, affine và perspective warping), chuyển đổi không gian màu, histogram, v.v..</li>
+                    <li><strong>Phân tích Video (video):</strong> Bao gồm ước tính chuyển động, trừ nền, và các thuật toán theo dõi đối tượng.</li>
+                    <li><strong>Hiệu chuẩn camera và Tái tạo 3D (calib3d):</strong> Bao gồm các thuật toán hình học đa góc nhìn, hiệu chuẩn camera đơn/stereo, ước tính tư thế đối tượng, và các thuật toán tái tạo 3D.</li>
+                    <li><strong>Phát hiện đối tượng (objdetect):</strong> Phát hiện các đối tượng và các thể hiện của các lớp được xác định trước (Ví dụ: khuôn mặt, mắt, cốc, người, ô tô).</li>
+                    <li><strong>GUI cấp cao (highgui):</strong> Hỗ trợ giao diện dễ sử dụng cho các khả năng UI đơn giản.</li>
+                    <li><strong>Video I/O (videoio):</strong> Hỗ trợ giao diện dễ sử dụng cho việc quay video và các codec video.</li>
+                </ul>
+
+                <h4>3. Khái niệm API quan trọng</h4>
+                <ul>
+                    <li><strong>Quản lý bộ nhớ tự động (Automatic Memory Management):</strong> OpenCV xử lý tất cả bộ nhớ tự động. Các cấu trúc dữ liệu như <code>std::vector</code> và <code>cv::Mat</code> có hàm hủy (destructors) tự động giải phóng bộ đệm bộ nhớ cơ bản khi cần.</li>
+                    <li><strong>Cấp phát tự động dữ liệu đầu ra (Automatic allocation of the output data):</strong> Nếu một hàm có các mảng đầu vào (<code>cv::Mat</code>) và một số mảng đầu ra, các mảng đầu ra sẽ được <strong>tự động cấp phát hoặc cấp phát lại</strong>.</li>
+                    <li><strong>Sử dụng hạn chế các Template (Limited use of templates):</strong> OpenCV hạn chế việc sử dụng template để tránh tăng đáng kể thời gian biên dịch và kích thước mã.</li>
+                </ul>
+
+                <h4>4. Triển khai OpenCV trong Python và C++</h4>
+                <p><strong>A. OpenCV trong Python:</strong></p>
+                <ul>
+                    <li>Cài đặt Python (khuyến nghị sử dụng Anaconda).</li>
+                    <li>Cài đặt OpenCV: <code>pip install opencv-python</code>.</li>
+                    <li>Cài đặt các thư viện khác tùy chọn (ví dụ: <code>pip install numpy</code>, <code>pip install matplotlib</code>).</li>
+                    <li>Sử dụng môi trường phát triển (IDE) như Spyder.</li>
+                </ul>
+                <p><strong>B. OpenCV trong C++ (Sử dụng VS Code):</strong> Quá trình cài đặt và cấu hình bao gồm:</p>
+                <ol>
+                    <li>Cài đặt <strong>VS Code</strong> và extensions C/C++.</li>
+                    <li>Cài đặt <strong>Compiler và Debugger</strong> (Ví dụ: Mingw-w64).</li>
+                    <li>Tải gói <strong>OpenCV đã được xây dựng sẵn</strong> (pre-built OpenCV package).</li>
+                    <li>Thêm đường dẫn Compiler và Gói OpenCV vào <strong>Biến Path</strong> của hệ thống.</li>
+                    <li>Cấu hình các tệp <code>.vscode</code> của dự án (<code>task.json</code>, <code>launch.json</code>, và <code>c_cpp_properties.json</code>).</li>
+                </ol>
+            </section>
+
+            <section id="muc6" class="content-section">
+                <h3>VI. BÀI TẬP (EXERCISES)</h3>
+                <p>Các bài tập được giao cho việc học tập và nghiên cứu bao gồm:</p>
+
+                <h4>Câu 1. Thu thập và Lưu trữ Ảnh</h4>
+                <ul>
+                    <li>Thu thập tối thiểu 10 ảnh màu ngoại cảnh và ảnh chụp đồ vật.</li>
+                    <li>Mỗi ảnh lưu theo 3 định dạng sau: <strong>PNG</strong>, <strong>BMP</strong>, <strong>JPG</strong>.</li>
+                </ul>
+
+                <h4>Câu 2. Lập trình Xử lý ảnh cơ bản với Python/C++ (Sử dụng OpenCV)</h4>
+                <p>Viết chương trình thực hiện các tác vụ sau:</p>
+                <ol>
+                    <li>Đọc các file ảnh đã thu thập ở câu 1.</li>
+                    <li>Hiển thị ảnh màu.</li>
+                    <li><strong>Tách ảnh RGB</strong> thành 3 lớp (layer) R, G, B riêng lẻ và hiển thị mỗi lớp trên một cửa sổ riêng.</li>
+                    <li><strong>Chuyển ảnh màu thành ảnh xám (grey)</strong> và hiển thị chúng.</li>
+                    <li>Thực hiện lặp <strong>50 lần xoay ảnh</strong>: Trong mỗi bước, ảnh được xoay <strong>15 độ</strong> và <strong>giảm kích thước xuống 90%</strong> so với kích thước hiện tại. Hiển thị ảnh trên cùng cửa sổ (xóa trạng thái cũ, hiển thị trạng thái mới) và dừng chờ 1 giây.</li>
+                    <li><strong>Cắt (crop) trích ra ¼ ảnh</strong> với tâm vùng lấy là tâm của ảnh, sau đó hiển thị.</li>
+                </ol>
+            </section>
+
+            <div class="analogy-box">
+                <i class="bi bi-lightbulb-fill"></i>
+                <strong>Để hình dung về khái niệm Xử lý ảnh Kỹ thuật số:</strong>
+                <p classt="mt-2">Xử lý ảnh kỹ thuật số giống như việc bạn có một bức ảnh chụp trên điện thoại thông minh (đó là <strong>ảnh kỹ thuật số</strong>), và thay vì chỉ nhìn vào nó, bạn mở ứng dụng chỉnh sửa (đó là <strong>hệ thống xử lý ảnh</strong>). Khi bạn áp dụng bộ lọc (ví dụ: làm sắc nét, chuyển sang đen trắng), đó là <strong>Xử lý cấp thấp</strong> hoặc <strong>Cải thiện ảnh</strong>. Khi bạn yêu cầu ứng dụng tìm và đánh dấu tất cả khuôn mặt trong ảnh, đó là <strong>Phân đoạn</strong> và <strong>Nhận dạng đối tượng</strong> (xử lý cấp trung).</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

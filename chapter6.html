@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 6: Trích chọn Đặc trưng</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Bảng */
+        .table {
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: #0056b3;
+            color: white;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8faff;
+        }
+
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 6
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> 1. Giới thiệu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> 2. Đặc trưng Moments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> 3. Đặc trưng Haar-like
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> 4. Giảm Chiều Dữ liệu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> 5. Đặc trưng SIFT, SURF
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc6">
+                            <i class="bi bi-chevron-right"></i> 6. Đặc trưng HOG
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc7">
+                            <i class="bi bi-chevron-right"></i> 7. Tổng kết và Tài liệu
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>CHƯƠNG 6: TRÍCH CHỌN ĐẶC TRƯNG</h1>
+                <h2>(FEATURE EXTRACTION)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Khoa:</strong> Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>1. GIỚI THIỆU</h3>
+                <ul>
+                    <li>Trong chương 5, chúng ta đã học về các phương pháp phân đoạn ảnh (segment image) thành các vùng/ranh giới.</li>
+                    <li>Tập hợp các pixel đã được phân đoạn thường cần phải được chuyển đổi thành một dạng phù hợp cho quá trình xử lý tiếp theo.</li>
+                    <li>Sau bước phân đoạn là trích chọn đặc trưng, bao gồm hai thành phần chính: <strong>phát hiện đặc trưng (feature detection)</strong> và <strong>mô tả đặc trưng (feature description)</strong>.</li>
+                    <li>Phát hiện đặc trưng là việc tìm kiếm các đặc trưng trong một ảnh, vùng hoặc ranh giới.</li>
+                    <li>Mô tả đặc trưng là việc gán các thuộc tính định lượng cho các đặc trưng đã được phát hiện.</li>
+                    <li>Các bộ mô tả đặc trưng (Feature descriptors) nên càng ít nhạy cảm càng tốt đối với các biến thể của các tham số như tỷ lệ (scale), dịch chuyển (translation), xoay (rotation), chiếu sáng (illumination), góc nhìn (viewpoint)....</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>2. TRÍCH CHỌN ĐẶC TRƯNG HÌNH DẠNG BẰNG MOMENTS</h3>
+                
+                <h4>2.1. Giới thiệu về Moment</h4>
+                <ul>
+                    <li>Moment là thuật toán giúp đánh giá sự giống nhau của 2 đối tượng.</li>
+                    <li>Moment được sử dụng trong các phép biến đổi như dịch chuyển (translate), tỷ lệ (scaling) hay xoay (rotate).</li>
+                    <li>Moment cũng có thể sử dụng các khối hình học để tái xây dựng lại đối tượng.</li>
+                </ul>
+
+                <h4>2.2. Công thức và Thứ tự Moment</h4>
+                <ul>
+                    <li>Giá trị $(p + q)$ là thứ tự của moment đó và được ký hiệu là $m_{p,q}$.</li>
+                    <li>$f(x, y)$ là giá trị tại pixel có tọa độ $(x, y)$.</li>
+                    <li>$m_{0,0}$ (zero order moment) chính là diện tích của đối tượng.</li>
+                    <li>$m_{0,1}$ hay $m_{1,0}$ (first order moments) chứa thông tin về tâm trọng lực (center of gravity).</li>
+                    <li>$m_{2,0}, m_{0,2}$ hay $m_{1,1}$ là second order moments.</li>
+                </ul>
+                
+                <h4>2.3. Moment Bất Biến (Moment Invariants)</h4>
+                <ul>
+                    <li>Dịch chuyển, xoay và tỷ lệ (TRS: Translate, rotation and scaling) là những phép biến đổi đồng dạng (similarity).</li>
+                    <li>Tính bất biến (Invariants) trong TRS là một yêu cầu quan trọng.</li>
+                    <li>Bất biến với dịch chuyển và tỷ lệ có thể khá trực quan, nhưng bất biến với xoay thì phức tạp hơn.</li>
+                </ul>
+            </section>
+            
+            <section id="muc3" class="content-section">
+                <h3>3. ĐẶC TRƯNG HAAR-LIKE</h3>
+                
+                <h4>3.1. Định nghĩa và Tính toán nhanh</h4>
+                <ul>
+                    <li>Đặc trưng Haar-like được định nghĩa là sự khác biệt về cường độ ảnh (image intensities) giữa các vùng hình chữ nhật liền kề.</li>
+                    <li>Đặc trưng này có thể được tính toán rất nhanh.</li>
+                    <li>Trong một ảnh 24x24, có thể có đến 160.000 đặc trưng.</li>
+                    <li><strong>Ứng dụng:</strong> Nhận diện khuôn mặt (Face recognition), Phát hiện khuôn mặt (Face detection).</li>
+                </ul>
+                
+                <h4>3.2. Bảng Tổng Diện Tích (Summed Area Table - SAT) / Integral Image</h4>
+                <ul>
+                    <li>SAT (Summed area table) là bảng tra cứu hai chiều chứa tổng tất cả các pixel nằm trong vùng phía trên bên trái.</li>
+                    <li>SAT có thể tính toán tổng cường độ trong các vùng hình chữ nhật chỉ bằng bốn lần tra cứu (four access lookups).
+                        <br>Công thức tính tổng cơ bản: $Sum = S4 - S2 - S3 + S1$.
+                    </li>
+                    <li>Integral image $I(j_1, j_2)$ là tổng của các pixel nằm phía trên và bên trái của tọa độ $(j_1, j_2)$.
+                        $$I(j_1, j_2) = \sum_{u=0}^{j_1-1} \sum_{v=0}^{j_2-1} X(u, v)$$
+                    </li>
+                    <li>Sử dụng Integral Image, tổng hình chữ nhật $RectSum$ có thể được tính bằng 3 phép cộng.</li>
+                </ul>
+
+                <h4>3.3. Đặc trưng Haar-like Mở rộng (Extended Haar-like features)</h4>
+                <ul>
+                    <li>Bao gồm: Edge features, Line features, Center-surround features, Box features.</li>
+                    <li>Đối với phát hiện người (Human detection), các đặc trưng phức tạp hơn đã được đề xuất, ví dụ: Parallelogram Haar-Like Features (sử dụng Bảng SAT được biến đổi).</li>
+                </ul>
+            </section>
+            
+            <section id="muc4" class="content-section">
+                <h3>4. GIẢM CHIỀU DỮ LIỆU (DIMENSIONAL REDUCTION)</h3>
+                
+                <h4>4.1. Mục tiêu và Khái niệm</h4>
+                <ul>
+                    <li>Việc tăng số lượng đặc trưng không phải lúc nào cũng cải thiện độ chính xác phân loại (Vấn đề "Curse of Dimensionality").</li>
+                    <li>Số lượng ví dụ huấn luyện cần thiết tăng theo cấp số nhân với số chiều $d$ (tức là $k^d$).</li>
+                    <li><strong>Mục tiêu:</strong> Chọn một tập hợp tối ưu các đặc trưng có số chiều thấp hơn.</li>
+                    <li><strong>Trích chọn đặc trưng (Feature extraction):</strong> Tìm tập hợp đặc trưng mới ($y$) từ đặc trưng cũ ($x$) qua ánh xạ $f()$.</li>
+                    <li><strong>Lựa chọn đặc trưng (Feature selection):</strong> Chọn một tập hợp con của các đặc trưng ban đầu.</li>
+                </ul>
+
+                <h4>4.2. Phân tích Thành phần Chính (PCA – Principal Components Analysis)</h4>
+                <ul>
+                    <li>PCA là một phương pháp tuyến tính (linear) và không giám sát (unsupervised) để giảm chiều.</li>
+                    <li><strong>Mục tiêu:</strong> Tìm kiếm một tập hợp các cơ sở mới tương ứng với phương sai cao nhất (highest variance) trong dữ liệu.</li>
+                    <li>Chiều mới có phương sai lớn nhất là thành phần chính thứ nhất ($z_1$).</li>
+                </ul>
+                <h5>Các bước chính của PCA:</h5>
+                <ol>
+                    <li>Tính giá trị trung bình mẫu ($\bar{\mathbf{x}}$).</li>
+                    <li>Trừ giá trị trung bình mẫu (tâm hóa dữ liệu về 0).</li>
+                    <li>Tính ma trận hiệp phương sai mẫu ($\Sigma_x$).</li>
+                    <li>Tính các trị riêng/vector riêng ($\lambda_i, u_i$) của $\Sigma_x$. (Giả sử $\lambda_1 > \lambda_2 > \dots > \lambda_N$).</li>
+                    <li>Bước giảm chiều: xấp xỉ $\mathbf{x}$ chỉ bằng cách sử dụng $K$ vector riêng đầu tiên.</li>
+                </ol>
+                <h5>Ứng dụng PCA trong Xử lý Ảnh (Eigenfaces):</h5>
+                <ul>
+                    <li>Thách thức: Ma trận hiệp phương sai $\Sigma_x$ có thể rất lớn ($N^2 \times N^2$).</li>
+                    <li>Kỹ thuật "Trick": Sử dụng ma trận $A^T A$ (kích thước $M \times M$) thay vì $A A^T$ ($N^2 \times N^2$).</li>
+                    <li>Các trị riêng $\mu_i$ của $A^T A$ bằng với $M$ trị riêng lớn nhất $\lambda_i$ của $A A^T$ ($\lambda_i = \mu_i$).</li>
+                    <li>Các vector riêng $u_i$ của $A A^T$ được tính từ $v_i$ của $A^T A$ bằng công thức $u_i = A v_i$.</li>
+                    <li>Kết quả: Các vector riêng hàng đầu ($u_1, \dots, u_k$) khi được hình dung dưới dạng hình ảnh được gọi là <strong>Eigenfaces</strong>.</li>
+                </ul>
+                
+                <h4>4.3. Phân tích Tuyến tính Phân biệt (LDA – Linear Discriminant Analysis)</h4>
+                <ul>
+                    <li><strong>Mục tiêu của LDA:</strong> Thực hiện giảm chiều "trong khi bảo toàn càng nhiều thông tin phân biệt lớp càng tốt".</li>
+                    <li>LDA tìm kiếm các hướng mà dọc theo đó các lớp được phân tách tốt nhất.</li>
+                    <li>LDA tính toán một phép biến đổi để tối đa hóa sự phân tán giữa các lớp ($S_b$) đồng thời tối thiểu hóa sự phân tán trong nội bộ lớp ($S_w$).</li>
+                    <li>Giải pháp cho $S_w$ suy biến: Áp dụng PCA trước để giảm chiều, sau đó áp dụng LDA.</li>
+                </ul>
+
+                <h4>4.4. Đặc trưng LBPH (Local Binary Pattern Histogram)</h4>
+                <ul>
+                    <li>LBPH là đặc trưng dựa trên lân cận pixel, quan trọng cho việc phân tích cấu trúc (texture analysis).</li>
+                    <li><strong>Tính toán LBP:</strong>
+                        <ol>
+                            <li>Đối với mỗi pixel trung tâm ($N_c$), một MÃ NHỊ PHÂN (BINARY CODE) được tạo ra.</li>
+                            <li>Các pixel lân cận ($N_p$) được ngưỡng (thresholded) bằng giá trị $N_c$.</li>
+                            <li>Ví dụ: Ô 3x3 ($P=8$ điểm), tạo ra số 8-bit. Bit $b_i = 1$ nếu lân cận > trung tâm, và 0 nếu ngược lại.</li>
+                        </ol>
+                    </li>
+                    <li>Kết quả là một ma trận mới (giá trị thập phân), sau đó được biểu diễn bằng biểu đồ (histogram).</li>
+                    <li>Đặc trưng LBP được ghi nhận là bất biến với sự chiếu sáng (illumination invariant).</li>
+                </ul>
+            </section>
+            
+            <section id="muc5" class="content-section">
+                <h3>5. ĐẶC TRƯNG SIFT VÀ SURF</h3>
+                
+                <h4>5.1. SIFT (Scale-Invariant Feature Transform)</h4>
+                <ul>
+                    <li>SIFT tạo ra các đặc trưng ảnh ("keypoints") có các tính chất:
+                        <ul>
+                            <li>Bất biến với tỷ lệ và xoay.</li>
+                            <li>Bất biến một phần với sự thay đổi chiếu sáng và góc nhìn 3D.</li>
+                            <li>Có tính phân biệt cao (highly distinctive).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h5>Tổng quan Thuật toán SIFT (4 bước):</h5>
+                <ol>
+                    <li><strong>Phát hiện cực trị không gian tỷ lệ:</strong> Sử dụng hàm Difference-of-Gaussian (DoG).
+                        $$D(x, y, \sigma) = L(x, y, k\sigma) - L(x, y, \sigma)$$
+                    </li>
+                    <li><strong>Định vị điểm khóa:</strong> Loại bỏ các điểm có độ tương phản thấp hoặc giống cạnh.</li>
+                    <li><strong>Gán hướng:</strong> Gán 1 hoặc nhiều hướng cho mỗi điểm khóa (để bất biến xoay).</li>
+                    <li><strong>Bộ mô tả điểm khóa:</strong> Tạo từ gradient ảnh cục bộ (thường là 4x4x8 = 128 chiều).</li>
+                </ol>
+
+                <h4>5.2. SURF (Speeded Up Robust Features)</h4>
+                <ul>
+                    <li>SURF sử dụng <strong>Fast Hessian detector</strong> (xấp xỉ DoG, kết hợp với Integral image).</li>
+                    <li>Bộ mô tả SURF mô tả sự phân bố của các phản ứng sóng Haar (Haar wavelet responses) trong vùng lân cận, cũng sử dụng Integral Image.</li>
+                </ul>
+            </section>
+            
+            <section id="muc6" class="content-section">
+                <h3>6. ĐẶC TRƯNG HOG (HISTOGRAM OF ORIENTED GRADIENTS)</h3>
+                
+                <h4>6.1. Tổng quan</h4>
+                <ul>
+                    <li>HOG (Histogram of Oriented Gradient) là một bộ mô tả tóm tắt hướng gradient trong các ô không gian (spatial cells).</li>
+                </ul>
+
+                <h4>6.2. Quy trình Tính toán (cho phát hiện người đi bộ)</h4>
+                <ol>
+                    <li><strong>Tiền xử lý dữ liệu:</strong> Trích xuất cửa sổ kích thước cố định (ví dụ: 64x128 pixel).</li>
+                    <li><strong>Tính toán Gradient (direction x và y):</strong> $G_x$ và $G_y$.</li>
+                    <li><strong>Tính Độ lớn và Hướng Gradient:</strong>
+                        <ul>
+                            <li>$\text{Magnitude} = \sqrt{[(G_x)^2 + (G_y)^2]}$</li>
+                            <li>$\Phi = \arctan(G_y / G_x)$</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tính Histogram of Gradients trong các ô 8x8:</strong>
+                        <ul>
+                            <li>Sử dụng 9 bins cho hướng (góc không dấu $0^\circ - 180^\circ$).</li>
+                            <li>Các vote được tính trọng số bằng độ lớn (magnitude).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Chuẩn hóa Gradient trong khối 16x16:</strong> Chuẩn hóa liên quan đến các ô xung quanh.</li>
+                    <li><strong>Đặc trưng cho toàn bộ ảnh:</strong> Đối với ảnh 64x128, có $105$ khối 16x16. Tổng số đặc trưng là $105 \times 36 = 3780$ đặc trưng.</li>
+                </ol>
+                
+                <h4>6.3. Ứng dụng</h4>
+                <ul>
+                    <li>Phát hiện người đi bộ (Pedestrian detection).</li>
+                    <li>Học một mẫu người đi bộ sử dụng máy vector hỗ trợ (Support Vector Machine - SVM).</li>
+                    <li>Phát hiện đa tỷ lệ (multi-scale detection) bằng kim tự tháp HOG (HOG pyramid).</li>
+                </ul>
+            </section>
+            
+            <section id="muc7" class="content-section">
+                <h3>7. TỔNG KẾT VÀ TÀI LIỆU THAM KHẢO</h3>
+                
+                <h4>Tóm tắt các phương pháp chính:</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Đặc trưng</th>
+                                <th>Mục tiêu chính</th>
+                                <th>Tính chất nổi bật</th>
+                                <th>Ứng dụng tiêu biểu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Moments</strong></td>
+                                <td>Đánh giá sự giống nhau, bất biến TRS</td>
+                                <td>Tính toán diện tích, tâm trọng lực.</td>
+                                <td>Tái xây dựng đối tượng.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Haar-like</strong></td>
+                                <td>Phân biệt cường độ vùng liền kề</td>
+                                <td>Tính toán cực kỳ nhanh (dùng Integral Image).</td>
+                                <td>Phát hiện khuôn mặt.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PCA</strong></td>
+                                <td>Giảm chiều, giữ lại phương sai tối đa</td>
+                                <td>Không giám sát, tuyến tính.</td>
+                                <td>Nhận diện khuôn mặt (Eigenfaces).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LDA</strong></td>
+                                <td>Giảm chiều, tối đa hóa sự phân biệt lớp</td>
+                                <td>Giám sát, tối ưu hóa $S_b/S_w$.</td>
+                                <td>Phân biệt danh tính và biến thể chiếu sáng.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBPH</strong></td>
+                                <td>Phân tích cấu trúc (texture)</td>
+                                <td>Bất biến với chiếu sáng.</td>
+                                <td>Nhận diện khuôn mặt.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SIFT/SURF</strong></td>
+                                <td>Phát hiện điểm khóa, mô tả cục bộ</td>
+                                <td>Bất biến tỷ lệ/xoay (SIFT), Tốc độ cao (SURF).</td>
+                                <td>Phát hiện và so khớp đối tượng.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>HOG</strong></td>
+                                <td>Mô tả hướng gradient</td>
+                                <td>Tóm tắt phân bố gradient cục bộ.</td>
+                                <td>Phát hiện người đi bộ.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Liên kết OpenCV hỗ trợ nghiên cứu:</h4>
+                <ul>
+                    <li><strong>Shape extraction:</strong> <a href="https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html" target="_blank">OpenCV Docs</a></li>
+                    <li><strong>Haar-like feature:</strong> <a href="https://docs.opencv.org/2.4/modules/objdetect/doc/cascade_classification.html" target="_blank">OpenCV Docs</a></li>
+                    <li><strong>PCA:</strong> <a href="https://docs.opencv.org/master/d1/dee/tutorial_introduction_to_pca.html" target="_blank">OpenCV Docs</a></li>
+                    <li><strong>LDA, LBPH:</strong> <a href="https://docs.opencv.org/3.4/da/d60/tutorial_face_main.html" target="_blank">OpenCV Docs</a></li>
+                    <li><strong>SIFT, SURF:</strong> <a href="https://docs.opencv.org/3.4/db/d27/tutorial_py_table_of_contents_feature2d.html" target="_blank">OpenCV Docs</a></li>
+                    <li><strong>HOG:</strong> <a href="https://docs.opencv.org/master/d5/d33/structcv_1_1HOGDescriptor.html" target="_blank">OpenCV Docs</a></li>
+                </ul>
+            </section>
+            
+            <div class="analogy-box">
+                <h5><i class="bi bi-lightbulb-fill"></i> Tương tự (Analogy)</h5>
+                <p>Để củng cố sự hiểu biết về Trích chọn Đặc trưng, hãy hình dung các phương pháp này như việc <strong>xây dựng hồ sơ nhận dạng</strong> cho một người.</p>
+                <ul>
+                    <li><strong>Haar-like</strong> giống như việc nhận diện các đặc điểm cơ bản (ví dụ: hình dạng mắt, mũi, miệng) bằng cách so sánh độ sáng giữa các vùng liền kề — nó rất nhanh, nhưng có thể bỏ sót chi tiết tinh tế.</li>
+                    <li><strong>Moments</strong> giống như việc đo đạc hình dạng tổng thể của người đó (chiều cao, cân nặng, tâm trọng lực) — cung cấp thông tin hình học bất biến.</li>
+                    <li><strong>SIFT/SURF</strong> giống như việc ghi lại các vết sẹo hoặc dấu vân tay (keypoints) — chúng là các đặc điểm cục bộ, phức tạp và không thay đổi dù người đó thay đổi góc nhìn hoặc kích thước trong ảnh.</li>
+                    <li><strong>PCA/LDA</strong> giống như việc tạo ra một bản tóm tắt hồ sơ hiệu quả; PCA cố gắng giữ lại thông tin quan trọng nhất (biến thể lớn nhất) trong khi LDA cố gắng giữ lại những gì giúp phân biệt người này với người khác (tối đa hóa sự khác biệt giữa các lớp).</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

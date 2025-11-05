@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 4: Xử lý ảnh Hình thái học</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        /* Style cho mục lục con */
+        .nav-link.sub-link {
+            padding-left: 2rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+        .nav-link.sub-link .bi {
+            font-size: 0.7rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Hộp tóm tắt/kết luận */
+        .summary-box {
+            background: #fffbe6;
+            border-left: 5px solid #ffeb3b;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .summary-box h5 {
+            color: #b8860b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Bảng */
+        .table {
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: #0056b3;
+            color: white;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8faff;
+        }
+
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu công thức quá dài */
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 4
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> 1. Khái niệm cơ bản
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> 2. Phép Co và Phép Giãn
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> 3. Phép Mở và Phép Đóng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> 4. Phép biến đổi Hit-or-Miss
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> 5. Thuật toán Hình thái học
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc6">
+                            <i class="bi bi-chevron-right"></i> 6. Ứng dụng với OpenCV
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc7">
+                            <i class="bi bi-chevron-right"></i> Tóm tắt
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>BÀI GIẢNG: XỬ LÝ ẢNH HÌNH THÁI HỌC</h1>
+                <h2>(MORPHOLOGICAL IMAGE PROCESSING)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Nguồn tài liệu tham khảo:</strong> <a href="https://docs.opencv.org/3.4/d9/d61/tutorial_py_morphological_ops.html" target="_blank">OpenCV Docs</a></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>1. KHÁI NIỆM CƠ BẢN (PRELIMINARIES)</h3>
+                
+                <h4>1.1. Định nghĩa</h4>
+                <ul>
+                    <li><strong>Morphology ("Hình thái học"):</strong> Là một nhánh trong sinh học, nghiên cứu về hình thức và cấu trúc của động vật và thực vật.</li>
+                    <li><strong>Mathematical Morphology ("Hình thái học Toán học"):</strong> Là một công cụ được sử dụng để trích xuất các thành phần của ảnh (image components). Các thành phần này hữu ích trong việc biểu diễn và mô tả hình dạng của vùng (region shape).</li>
+                    <li>Ngôn ngữ nền tảng của hình thái học toán học là <strong>Lý thuyết Tập hợp (Set theory)</strong>.</li>
+                    <li>Hình thái học cung cấp một cách tiếp cận thống nhất và mạnh mẽ cho nhiều vấn đề xử lý ảnh.</li>
+                </ul>
+
+                <h4>1.2. Biểu diễn Tập hợp trong Ảnh Nhị phân</h4>
+                <ul>
+                    <li>Trong ảnh nhị phân (binary images), các phần tử của tập hợp là các thành viên của không gian số nguyên 2 chiều – $\mathbf{Z^2}$.</li>
+                    <li>Mỗi phần tử $(x, y)$ là tọa độ của một pixel đen (hoặc trắng) trong ảnh.</li>
+                </ul>
+
+                <h4>1.3. Các Khái niệm Cơ bản trong Lý thuyết Tập hợp</h4>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Khái niệm</th>
+                            <th>Ký hiệu</th>
+                            <th>Định nghĩa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tập con (Subset)</td>
+                            <td>$A \subseteq B$</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Hợp (Union)</td>
+                            <td>$A \cup B$</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Giao (Intersection)</td>
+                            <td>$A \cap B$</td>
+                            <td>(Tập hợp rỗng $A \cap B = \phi$ là disjoint)</td>
+                        </tr>
+                        <tr>
+                            <td>Bổ sung (Complement)</td>
+                            <td>$A^c$</td>
+                            <td>$\equiv \{w|w \notin A\}$</td>
+                        </tr>
+                        <tr>
+                            <td>Hiệu (Difference)</td>
+                            <td>$A - B$</td>
+                            <td>$\equiv \{w|w \in A, w \notin B\} = A \cap B^c$</td>
+                        </tr>
+                        <tr>
+                            <td>Phản xạ (Reflection)</td>
+                            <td>$\hat{B}$</td>
+                            <td>$\equiv \{w|w = -b, \forall b \in B\}$</td>
+                        </tr>
+                        <tr>
+                            <td>Tịnh tiến (Translation)</td>
+                            <td>$A_z$</td>
+                            <td>$\equiv \{c|c = a + z, \forall a \in A\}$</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>1.4. Các Phép toán Logic</h4>
+                <ul>
+                    <li>Các phép toán logic chính được sử dụng trong xử lý ảnh là <strong>AND, OR, NOT (COMPLEMENT)</strong>.</li>
+                    <li>Các phép toán này được thực hiện trên cơ sở từng pixel tương ứng (bitwise).</li>
+                    <li>Các phép toán logic là trường hợp riêng của các phép toán tập hợp nhị phân: AND (Giao), OR (Hợp), và NOT (Bổ sung).</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>2. PHÉP CO (EROSION) VÀ PHÉP GIÃN (DILATION)</h3>
+
+                <h4>2.1. Phép Co (Erosion)</h4>
+                <h5>A. Khái niệm và Định nghĩa</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Phép co được sử dụng để thu hẹp (shrinking) một phần tử A (đối tượng) bằng cách sử dụng một phần tử cấu trúc B (Structuring Element - SE).</li>
+                    <li><strong>Định nghĩa:</strong> Phép co của Tập A bởi B trong $Z^2$ được định nghĩa bằng phương trình sau:
+                        $$\mathbf{A \ominus B = \{z|(B)_z \subseteq A\}}$$
+                    </li>
+                    <li><strong>Giải thích:</strong> Phương trình này chỉ ra rằng phép co của A bởi B là tập hợp tất cả các điểm $z$ sao cho B, được tịnh tiến bởi $z$, nằm hoàn toàn trong A.</li>
+                    <li><strong>Ứng dụng:</strong> Một trong những ứng dụng đơn giản nhất của phép co là để loại bỏ các chi tiết không liên quan khỏi một ảnh nhị phân.</li>
+                </ul>
+
+                <h5>B. Thực thi (OpenCV)</h5>
+                <p>Cú pháp ví dụ: <code>img_erosion = cv2.erode(img, kernel, iterations=1)</code>.</p>
+                <p>Kích thước SE (kernel) càng lớn, đối tượng A càng bị thu hẹp nhiều.</p>
+
+                <h4>2.2. Phép Giãn (Dilation)</h4>
+                <h5>A. Khái niệm và Định nghĩa</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Phép giãn được sử dụng để mở rộng (expanding) một phần tử A bằng cách sử dụng phần tử cấu trúc B.</li>
+                    <li><strong>Định nghĩa:</strong> Phép giãn của A bởi B được định nghĩa bằng phương trình sau:
+                        $$\mathbf{A \oplus B = \{z| \hat{B}_z \cap A \neq \emptyset\}}$$
+                    </li>
+                    <li><strong>Giải thích:</strong> Phép giãn của A bởi B là tập hợp tất cả các dịch chuyển $z$, sao cho $\hat{B}$ (phản xạ của B) và A chồng lấn lên nhau ít nhất một phần tử.</li>
+                    <li>Phép giãn có thể giúp nối các đoạn đứt gãy trong các đối tượng ảnh.</li>
+                </ul>
+
+                <h5>B. Thực thi (OpenCV)</h5>
+                <p>Cú pháp ví dụ: <code>img_dilation = cv2.dilate(img, kernel, iterations=1)</code>.</p>
+
+                <h4>2.3. Tính Đối Ngẫu giữa Phép Co và Phép Giãn</h4>
+                <p>Phép giãn và phép co là đối ngẫu của nhau (duals of each other). Công thức đối ngẫu:</p>
+                $$(A \ominus B)^c = A^c \oplus \hat{B}$$
+                $$(A \oplus B)^c = A^c \ominus \hat{B}$$
+            </section>
+
+            <section id="muc3" class="content-section">
+                <h3>3. PHÉP MỞ (OPENING) VÀ PHÉP ĐÓNG (CLOSING)</h3>
+                <p>Các phép toán mở và đóng là các phép toán hình thái học bậc cao, chúng cũng là đối ngẫu của nhau.</p>
+
+                <h4>3.1. Phép Mở (Opening)</h4>
+                <ul>
+                    <li><strong>Mục đích:</strong> Làm mịn các đường đồng mức (smoothes contours), loại bỏ các chỗ lồi (eliminates protrusions).</li>
+                    <li><strong>Định nghĩa:</strong> Phép mở được thực hiện bằng cách: Đầu tiên <strong>co</strong> A bởi B, và sau đó <strong>giãn</strong> kết quả bởi B.</li>
+                    <li><strong>Công thức:</strong>
+                        $$\mathbf{A \circ B = (A \ominus B) \oplus B}$$
+                    </li>
+                </ul>
+
+                <h4>3.2. Phép Đóng (Closing)</h4>
+                <ul>
+                    <li><strong>Mục đích:</strong> Làm mịn các phần của đường đồng mức, hợp nhất các chỗ đứt gãy hẹp, loại bỏ các lỗ nhỏ và lấp đầy các khe hở.</li>
+                    <li><strong>Định nghĩa:</strong> Phép đóng được thực hiện bằng cách: Đầu tiên <strong>giãn</strong> A bởi B, và sau đó <strong>co</strong> kết quả bởi B.</li>
+                    <li><strong>Công thức:</strong>
+                        $$\mathbf{A \bullet B = (A \oplus B) \ominus B}$$
+                    </li>
+                </ul>
+
+                <h4>3.3. Thực thi (OpenCV)</h4>
+                <p>Phép mở và đóng thường được thực hiện thông qua hàm <code>cv2.morphologyEx</code>.</p>
+                <ul>
+                    <li><strong>Phép Mở:</strong> <code>opening = cv2.morphologyEx(imB, cv2.MORPH_OPEN, kernel)</code>.</li>
+                    <li><strong>Phép Đóng:</strong> <code>closing = cv2.morphologyEx(imB, cv2.MORPH_CLOSE, kernel)</code>.</li>
+                    <li><strong>Ứng dụng:</strong> Được sử dụng để lọc hình thái học (morphological filtering), ví dụ loại bỏ nhiễu.</li>
+                </ul>
+            </section>
+            
+            <section id="muc4" class="content-section">
+                <h3>4. PHÉP BIẾN ĐỔI HIT-OR-MISS</h3>
+                <p>Phép biến đổi Hit-or-Miss là một công cụ hình thái học cơ bản để phát hiện hình dạng (shape detection).</p>
+
+                <h4>4.1. Khái niệm và Định nghĩa</h4>
+                <p>Phép biến đổi Hit-or-Miss sử dụng hai phần tử cấu trúc, $B = (B_1, B_2)$, trong đó:</p>
+                <ul>
+                    <li>$B_1$: Chính là hình dạng cần tìm (Hit).</li>
+                    <li>$B_2$: Là nền cục bộ (Miss).</li>
+                </ul>
+                <p>Sự trùng khớp của B trong A, ký hiệu là $A \circledast B$, được định nghĩa là:</p>
+                $$\mathbf{A \circledast B = (A \ominus B_1) \cap (A^c \ominus B_2)}$$
+
+                <h4>4.2. Giải thích</h4>
+                <p>Phép biến đổi này yêu cầu hai điều kiện xảy ra đồng thời:</p>
+                <ol>
+                    <li><strong>Hit (Trùng khớp):</strong> $B_1$ tìm thấy sự trùng khớp ở tiền cảnh (Phần $(A \ominus B_1)$).</li>
+                    <li><strong>Miss (Trượt):</strong> $B_2$ tìm thấy sự trùng khớp ở hậu cảnh (Phần $(A^c \ominus B_2)$).</li>
+                </ol>
+            </section>
+
+            <section id="muc5" class="content-section">
+                <h3>5. MỘT SỐ THUẬT TOÁN HÌNH THÁI HỌC CƠ BẢN</h3>
+                
+                <h4>5.1. Trích xuất Biên (Boundary Extraction)</h4>
+                <p><strong>Thực hiện:</strong> Lấy hiệu tập hợp giữa A và kết quả co của A.</p>
+                <p><strong>Công thức:</strong> $\mathbf{A - (A \ominus B)}$</p>
+
+                <h4>5.2. Lấp đầy Vùng (Region Filling)</h4>
+                <p><strong>Mục đích:</strong> Lấp đầy các vùng (lỗ hổng) bên trong đường biên của đối tượng.</p>
+                <p><strong>Thực hiện:</strong> Dựa trên chuỗi các phép giãn, bổ sung và giao, bắt đầu từ một điểm $X_0$ bên trong vùng.</p>
+
+                <h4>5.3. Trích xuất Thành phần Liên thông (Extraction of Connected Components)</h4>
+                <p><strong>Mục đích:</strong> Trích xuất một thành phần liên thông bằng cách chọn một điểm trên đối tượng.</p>
+                <p><strong>Ứng dụng:</strong> Giúp kiểm tra tự động, ví dụ: xác định số lượng pixel trong mỗi thành phần.</p>
+
+                <h4>5.4. Vỏ Lồi (Convex Hull)</h4>
+                <p><strong>Định nghĩa:</strong> Vỏ lồi H của tập S là tập lồi nhỏ nhất chứa S.</p>
+                <p><strong>Thuật toán:</strong> Áp dụng lặp lại phép biến đổi Hit-or-Miss ($A \circledast B_i$) với các phần tử B khác nhau.</p>
+
+                <h4>5.5. Làm Mỏng (Thinning)</h4>
+                <p><strong>Định nghĩa:</strong> Phép làm mỏng của tập A bởi B có thể được định nghĩa bằng phép biến đổi Hit-and-Miss.</p>
+                <p><strong>Thực hiện:</strong> Dựa trên một chuỗi các phần tử cấu trúc xoay vòng, lặp lại cho đến khi không có thay đổi nào nữa.</p>
+
+                <h4>5.6. Làm Dày (Thickening)</h4>
+                <p><strong>Định nghĩa:</strong> Phép làm dày là đối ngẫu hình thái học của phép làm mỏng.</p>
+                <p><strong>Công thức:</strong> $A \odot B = A \cup (A \circledast B)$.</p>
+                <p><strong>Thực hành:</strong> Thường được thực hiện bằng cách làm mỏng nền ($A^c$) rồi lấy phần bù ($C^c$) của kết quả.</p>
+
+                <h4>5.7. Bộ Xương (Skeletons)</h4>
+                <p><strong>Khái niệm:</strong> Bộ xương $S(A)$ của tập A được định nghĩa bằng tâm $z$ của "đĩa tối đa" (maximum disk) nằm hoàn toàn trong A.</p>
+                <p><strong>Định nghĩa bằng phép toán:</strong> Bộ xương của A được định nghĩa bằng tổng hợp (union) của các tập con bộ xương $S_k(A)$:</p>
+                $$S(A) = \bigcup_{k=0}^{K} S_k(A)$$
+                <p>Trong đó: $S_k(A) = (A \ominus k B) - (A \ominus k B) \circ B$.</p>
+                <p><strong>Tái tạo:</strong> Tập A có thể được tái tạo lại từ các tập con bộ xương $S_k(A)$ bằng cách sử dụng phép giãn liên tiếp:</p>
+                $$A = \bigcup_{k=0}^{K} (S_k(A) \oplus k B)$$
+            </section>
+            
+            <section id="muc6" class="content-section">
+                <h3>6. ỨNG DỤNG VỚI OPENCV</h3>
+                <p>Thư viện OpenCV cung cấp các hàm chức năng mạnh mẽ để thực hiện các phép toán hình thái học.</p>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Phép toán</th>
+                            <th>Hàm OpenCV</th>
+                            <th>Ví dụ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Co (Erosion)</td>
+                            <td><code>cv2.erode()</code></td>
+                            <td><code>img_erosion = cv2.erode(imB, kernel, iterations=1)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Giãn (Dilation)</td>
+                            <td><code>cv2.dilate()</code></td>
+                            <td><code>img_dil1 = cv2.dilate(imB, kernel1, iterations=1)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Mở/Đóng (Opening/Closing)</td>
+                            <td><code>cv2.morphologyEx()</code></td>
+                            <td><code>opening = cv2.morphologyEx(imB, cv2.MORPH_OPEN, kernel)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="muc7">
+                <div class="summary-box">
+                    <h5><i class="bi bi-bookmark-star-fill"></i> Tóm tắt</h5>
+                    <p>Hình thái học Toán học là một công cụ mạnh mẽ dựa trên lý thuyết tập hợp, cho phép chúng ta thay đổi cấu trúc của các đối tượng trong ảnh nhị phân. Các phép toán cơ bản như <strong>Co</strong> (thu hẹp/loại bỏ nhiễu) và <strong>Giãn</strong> (mở rộng/nối đứt gãy) là nền tảng, và chúng được kết hợp thành các phép toán phức tạp hơn như <strong>Mở</strong> (làm mịn đường biên ngoài, loại bỏ lồi) và <strong>Đóng</strong> (làm mịn đường biên trong, lấp đầy lỗ hổng). Các thuật toán nâng cao như Hit-or-Miss, trích xuất biên, làm mỏng và bộ xương cho phép phân tích hình dạng chi tiết.</p>
+                </div>
+    
+                <div class="analogy-box">
+                    <h5><i class="bi bi-lightbulb-fill"></i> Tương tự (Analogy)</h5>
+                    <p>Có thể hình dung phép toán hình thái học như việc bạn cố gắng di chuyển một Main (Structuring Element B) qua một khuôn đất sét (Image A).</p>
+                    <ul>
+                        <li><strong>Phép Co (Erosion):</strong> Chỉ khi khuôn mẫu B nằm hoàn toàn trong đất sét A, điểm trung tâm của B mới được giữ lại. Điều này làm đất sét co lại, loại bỏ các chi tiết nhỏ.</li>
+                        <li><strong>Phép Giãn (Dilation):</strong> Bất cứ khi nào khuôn mẫu B chạm vào đất sét A, nó sẽ để lại dấu ấn của mình. Điều này làm đất sét nở ra, lấp đầy các khe hở và lỗ nhỏ.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

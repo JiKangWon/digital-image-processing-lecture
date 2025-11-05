@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 3: Tăng cường ảnh trong Miền Tần số</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px; /* Tăng nhẹ độ rộng cho mục lục dài hơn */
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem; /* Điều chỉnh font nhỏ hơn 1 chút */
+        }
+        /* Style cho mục lục con */
+        .nav-link.sub-link {
+            padding-left: 2rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+        .nav-link.sub-link .bi {
+            font-size: 0.7rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Hộp tóm tắt/kết luận */
+        .summary-box {
+            background: #fffbe6;
+            border-left: 5px solid #ffeb3b;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .summary-box h5 {
+            color: #b8860b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Bảng */
+        .table {
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu công thức quá dài */
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 3
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> I. Mục tiêu Bài giảng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> II. Nội dung chi tiết
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_1">
+                            <i class="bi bi-record-fill"></i> 1. Khái niệm Cơ bản
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_2">
+                            <i class="bi bi-record-fill"></i> 2. Biến đổi Fourier
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_3">
+                            <i class="bi bi-record-fill"></i> 3. Lọc trong Miền Tần số
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_4">
+                            <i class="bi bi-record-fill"></i> 4. Bộ lọc Thông Thấp (Làm Mịn)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_5">
+                            <i class="bi bi-record-fill"></i> 5. Bộ lọc Thông Cao (Làm Sắc nét)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sub-link" href="#muc2_6">
+                            <i class="bi bi-record-fill"></i> 6. Ứng dụng với OpenCV
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> III. Kết luận
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>Chương 3: Tăng cường ảnh trong Miền Tần số</h1>
+                <h2>Môn học: Xử lý ảnh (Digital Image Processing)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Khoa:</strong> Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>I. MỤC TIÊU BÀI GIẢNG</h3>
+                <p>Sau khi học xong bài này, người học có thể:</p>
+                <ul>
+                    <li>Hiểu được khái niệm cơ bản về Biến đổi Fourier và Miền Tần số.</li>
+                    <li>Trình bày được định nghĩa, công thức của Biến đổi Fourier Rời rạc 2 chiều (2D DFT) và các khái niệm liên quan như Phổ, Góc Pha, và Phổ Công suất.</li>
+                    <li>Hiểu được nguyên tắc lọc ảnh trong miền tần số và mối quan hệ với miền không gian (Định lý Chập).</li>
+                    <li>Phân biệt và áp dụng các loại bộ lọc thông thấp (làm mịn) và thông cao (làm sắc nét) cơ bản.</li>
+                    <li>Thực hiện các thao tác biến đổi Fourier trên ảnh sử dụng thư viện OpenCV.</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>II. NỘI DUNG CHI TIẾT</h3>
+                
+                <h4 id="muc2_1">1. Khái niệm Cơ bản (Background)</h4>
+                <ul>
+                    <li><strong>Chuỗi Fourier:</strong> Bất kỳ hàm nào lặp lại tuần hoàn đều có thể được biểu diễn dưới dạng tổng của các hàm sin và/hoặc cos với các tần số khác nhau, mỗi hàm được nhân với một hệ số khác nhau.</li>
+                    <li><strong>Biến đổi Fourier (Fourier Transform):</strong> Ngay cả các hàm không tuần hoàn (nhưng có diện tích hữu hạn dưới đường cong) cũng có thể được biểu diễn dưới dạng tích phân của các hàm sin và/hoặc cos nhân với một hàm trọng số.</li>
+                </ul>
+
+                <h4 id="muc2_2">2. Biến đổi Fourier (Fourier Transformation)</h4>
+                
+                <h5>2.1. Định nghĩa Miền Tần số</h5>
+                <ul>
+                    <li><strong>Miền Tần số (Frequency Domain)</strong> dùng để chỉ mặt phẳng của biến đổi Fourier rời rạc hai chiều của một ảnh.</li>
+                    <li>Mục đích của biến đổi Fourier là biểu diễn một tín hiệu (ảnh) dưới dạng tổ hợp tuyến tính của các tín hiệu hình sin với nhiều tần số khác nhau.</li>
+                    <li><strong>Quan hệ Miền Không gian và Miền Tần số:</strong>
+                        <ul>
+                            <li>Ảnh đầu vào $f(x,y)$ là miền không gian (spatial domain).</li>
+                            <li>Ảnh đầu ra $F(u,v)$ là miền Fourier hoặc miền tần số (frequency domain).</li>
+                            <li>Ảnh trong miền không gian và miền Fourier có kích thước bằng nhau.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h5>2.2. Biến đổi Fourier Rời rạc Hai chiều (2D DFT)</h5>
+                
+                <p><strong>a) Công thức DFT 2D:</strong></p>
+                <p>Đối với ảnh vuông kích thước $N \times N$, 2D DFT được cho bởi công thức (cho trường hợp rời rạc):</p>
+                $$F(u,v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x,y) e^{-j2\pi(\frac{ux}{M} + \frac{vy}{N})}$$
+                <ul>
+                    <li>$f(x,y)$: ảnh trong miền không gian.</li>
+                    <li>$F(u,v)$: điểm trong không gian Fourier.</li>
+                    <li>Biến Tần số: $u, v$. Biến Không gian: $x, y$.</li>
+                </ul>
+
+                <p><strong>b) Công thức IDFT 2D (Biến đổi Fourier ngược):</strong></p>
+                $$f(x,y) = \frac{1}{MN} \sum_{u=0}^{M-1} \sum_{v=0}^{N-1} F(u,v) e^{j2\pi(\frac{ux}{M} + \frac{vy}{N})}$$
+
+                <p><strong>c) Các Khái niệm Liên quan trong 2D DFT:</strong></p>
+                <ul>
+                    <li>$R(u,v)$: Phần thực của $F(u,v)$.</li>
+                    <li>$I(u,v)$: Phần ảo của $F(u,v)$.</li>
+                    <li><strong>Phổ (Spectrum):</strong> $|F(u,v)| = \sqrt{R^2(u,v) + I^2(u,v)}$.</li>
+                    <li><strong>Góc Pha (Phase Angle):</strong> $\phi(u,v) = \arctan \left[\frac{I(u,v)}{R(u,v)}\right]$.</li>
+                    <li><strong>Phổ Công suất (Power Spectrum):</strong> $P(u,v) = |F(u,v)|^2$.</li>
+                </ul>
+
+                <h5>2.3. Ý nghĩa vật lý của Tần số</h5>
+                <ul>
+                    <li>Sóng sin hai chiều được viết là $z = a \sin(hx + ky)$, trong đó $h$ và $k$ là số lần sóng lặp lại theo hướng x và y (tức là tần số x và y).</li>
+                    <li>Mỗi pixel trong biến đổi Fourier có tọa độ $(h, k)$ đại diện cho đóng góp của sóng sin với tần số $x=h$ và tần số $y=k$.</li>
+                    <li><strong>Điểm Trung tâm (0,0):</strong> Điểm này đại diện cho sóng $(0,0)$ – một mặt phẳng phẳng. Cường độ (độ sáng) của nó chính là giá trị trung bình của các pixel trong ảnh.</li>
+                </ul>
+
+                <h4 id="muc2_3">3. Lọc trong Miền Tần số (Filtering in Frequency Domain)</h4>
+
+                <h5>3.1. Mô hình Lọc cơ bản</h5>
+                <p>Mô hình cơ bản để lọc trong miền tần số là:</p>
+                $$\mathbf{G(u, v) = H(u, v) F(u, v)}$$
+                <ul>
+                    <li>$F(u,v)$: Biến đổi Fourier của ảnh.</li>
+                    <li>$H(u,v)$: Hàm truyền bộ lọc (Filter Transfer Function).</li>
+                </ul>
+
+                <h5>3.2. Định lý Chập (Convolution Theorem)</h5>
+                <p>Định lý này thiết lập sự tương ứng giữa lọc trong miền không gian và miền tần số: Phép chập (convolution) trong miền không gian tương đương với phép nhân trong miền tần số:</p>
+                $$f(x,y) * h(x,y) \Leftrightarrow F(u,v)H(u,v)$$
+
+                <h5>3.3. Các Loại Bộ Lọc Cơ bản</h5>
+                <ul>
+                    <li><strong>Bộ lọc Thông Thấp (Lowpass Filter):</strong> Bằng 0 tất cả các thành phần tần số nằm trên một tần số cắt $D_0$.</li>
+                    <li><strong>Bộ lọc Thông Cao (Highpass Filter):</strong> Ngược lại với bộ lọc thông thấp.</li>
+                    <li><strong>Bộ lọc Thông Dải (Band Pass Filter).</strong></li>
+                </ul>
+
+                <h4 id="muc2_4">4. Bộ lọc Thông Thấp (Làm Mịn) (Smoothing Lowpass Filters)</h4>
+                <p>Làm mịn về cơ bản là một phép toán thông thấp trong miền tần số.</p>
+                <p><strong>Mục tiêu:</strong> Giảm tần số cao (vùng có thay đổi thang độ xám lớn) trong khi cho các tần số thấp đi qua (vùng thay đổi thang độ xám ít).</p>
+
+                <h5>4.1. Bộ lọc Thông Thấp Lý tưởng (Ideal Lowpass Filter - ILPF)</h5>
+                <p>Đây là bộ lọc đơn giản nhất, nó "cắt đứt" tất cả các thành phần tần số cao ở khoảng cách lớn hơn $D_0$ từ tâm biến đổi.</p>
+                <p>Hàm truyền:</p>
+                $$H(u,v) = \begin{cases} 1 & \text{if } D(u,v) \le D_0 \\ 0 & \text{if } D(u,v) > D_0 \end{cases}$$
+                <p>với $D(u,v)$ là khoảng cách từ điểm $(u,v)$ đến tâm: $D(u,v) = \sqrt{(u-M/2)^2 + (v-N/2)^2}$ (sau khi dịch tâm).</p>
+
+                <h5>4.2. Bộ lọc Thông Thấp Butterworth (Butterworth Lowpass Filter - BLPF)</h5>
+                <p>Bộ lọc BLPF có bậc $n$:</p>
+                $$H(u,v) = \frac{1}{1 + [D(u,v)/D_0]^{2n}}$$
+
+                <h5>4.3. Bộ lọc Thông Thấp Gaussian (Gaussian Lowpass Filter - GLPF)</h5>
+                <p>Hàm truyền có dạng kernel Gaussian:</p>
+                $$H(u,v) = e^{-D^2(u,v) / 2D_0^2}$$
+
+                <h4 id="muc2_5">5. Bộ lọc Thông Cao (Làm Sắc nét) (Sharpening Highpass Filters)</h4>
+                <p>Làm sắc nét đạt được bằng cách sử dụng bộ lọc thông cao. Bộ lọc thông cao $H_{hp}(u,v)$ có thể được thiết lập từ bộ lọc thông thấp $H_{lp}(u,v)$ bằng công thức:</p>
+                $$H_{hp}(u,v) = 1 - H_{lp}(u,v)$$
+                
+                <h5>5.1. Bộ lọc Thông Cao Lý tưởng (Ideal Highpass Filter - IHPF)</h5>
+                <p>Hàm truyền:</p>
+                $$H(u,v) = \begin{cases} 0 & \text{if } D(u,v) \le D_0 \\ 1 & \text{if } D(u,v) > D_0 \end{cases}$$
+
+                <h5>5.2. Bộ lọc Thông Cao Butterworth (Butterworth Highpass Filter - BHPF)</h5>
+                <p>Hàm truyền:</p>
+                $$H(u,v) = \frac{1}{1 + [D_0/D(u,v)]^{2n}}$$
+
+                <h5>5.3. Bộ lọc Thông Cao Gaussian (Gaussian Highpass Filter - GHPF)</h5>
+                <p>Hàm truyền:</p>
+                $$H(u,v) = 1 - e^{-D^2(u,v) / 2D_0^2}$$
+
+                <h5>5.4. Bộ lọc Laplacian trong Miền Tần số</h5>
+                <p>Bộ lọc Laplacian (trước khi dịch chuyển tâm) có hàm truyền là:</p>
+                $$H(u,v) = -(u^2 + v^2)$$
+                <p>Việc tăng cường ảnh bằng Laplacian thường sử dụng công thức (trong miền không gian): $g(x,y) = f(x,y) - \nabla^2f(x,y)$</p>
+
+                <h4 id="muc2_6">6. Ứng dụng với OpenCV</h4>
+                <p>Thư viện OpenCV và Numpy cung cấp các hàm để thực hiện Biến đổi Fourier của ảnh:</p>
+                
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Hàm chức năng</th>
+                            <th>Thư viện</th>
+                            <th>Mục đích</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>cv.dft()</code></td>
+                            <td>OpenCV</td>
+                            <td>Tính Biến đổi Fourier Rời rạc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>cv.idft()</code></td>
+                            <td>OpenCV</td>
+                            <td>Tính Biến đổi Fourier Ngược Rời rạc.</td>
+                        </tr>
+                        <tr>
+                            <td><code>np.fft.fft2()</code></td>
+                            <td>Numpy</td>
+                            <td>Tính Biến đổi Fourier 2D.</td>
+                        </tr>
+                        <tr>
+                            <td><code>np.fft.ifft2()</code></td>
+                            <td>Numpy</td>
+                            <td>Tính Biến đổi Fourier Ngược 2D.</td>
+                        </tr>
+                        <tr>
+                            <td><code>np.fft.fftshift()</code></td>
+                            <td>Numpy</td>
+                            <td>Dịch chuyển điểm (0,0) (tần số DC) về trung tâm.</td>
+                        </tr>
+                        <tr>
+                            <td><code>np.fft.ifftshift()</code></td>
+                            <td>Numpy</td>
+                            <td>Dịch chuyển ngược lại (trước khi IDFT).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Quy trình thực hiện cơ bản để lọc trong miền tần số:</strong></p>
+                <ol>
+                    <li>Đọc ảnh $f(x,y)$ (ảnh đầu vào).</li>
+                    <li>Thực hiện Biến đổi Fourier 2D: $F = \text{DFT}(f)$.</li>
+                    <li>Dịch chuyển tâm tần số: $\text{Fshift} = \text{fftshift}(F)$ (để tần số thấp ở trung tâm).</li>
+                    <li>Áp dụng bộ lọc: Nhân Fshift với hàm truyền bộ lọc $H(u,v)$ (ví dụ: tạo mask).</li>
+                    <li>Dịch chuyển ngược: $\text{Fishift} = \text{ifftshift}(\text{Fshift} \cdot H)$.</li>
+                    <li>Biến đổi Fourier Ngược: $g' = \text{IDFT}(\text{Fishift})$.</li>
+                    <li>Lấy phần thực hoặc độ lớn để thu được ảnh kết quả $g(x,y)$.</li>
+                </ol>
+            </section>
+            
+            <section id="muc3" class="content-section">
+                
+                <div class="summary-box">
+                    <h5><i class="bi bi-bookmark-star-fill"></i> III. KẾT LUẬN</h5>
+                    <p>Tăng cường ảnh trong miền tần số là một phương pháp mạnh mẽ, cho phép ta can thiệp trực tiếp vào các thành phần tần số của ảnh. Biến đổi Fourier đóng vai trò là cầu nối, chuyển đổi ảnh từ miền không gian (pixel và vị trí) sang miền tần số (tần số và biên độ của sóng sin).</p>
+                    <ul>
+                        <li>Các <strong>tần số thấp</strong> tương ứng với các vùng thay đổi chậm (làm mịn).</li>
+                        <li>Các <strong>tần số cao</strong> tương ứng với các chi tiết, cạnh (làm sắc nét).</li>
+                    </ul>
+                </div>
+    
+                <div class="analogy-box">
+                    <h5><i class="bi bi-lightbulb-fill"></i> Tương tự (Analogy)</h5>
+                    <p>Quá trình lọc ảnh trong miền tần số hoạt động tương tự như việc <strong>điều chỉnh bộ cân bằng âm thanh (equalizer)</strong> cho ảnh:</p>
+                    <ul>
+                        <li><strong>Bộ lọc thông thấp (Lowpass Filter)</strong> giống như việc giảm âm treble và tăng âm bass để làm âm thanh dịu đi (làm mịn ảnh).</li>
+                        <li><strong>Bộ lọc thông cao (Highpass Filter)</strong> giống như việc tăng âm treble để làm rõ chi tiết và sắc nét âm thanh (làm sắc nét ảnh).</li>
+                    </ul>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

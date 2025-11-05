@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 7: Nhận dạng Mẫu</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 7
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> I. Giới thiệu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> II. Máy Vectơ Hỗ trợ (SVM)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> III. Mạng Nơ-ron (NN)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> IV. Mạng Nơ-ron Sâu (DNN)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> Kết luận
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>CHƯƠNG 7: NHẬN DẠNG MẪU</h1>
+                <h2>(PATTERN RECOGNITION)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Đơn vị:</strong> Khoa Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>I. GIỚI THIỆU (INTRODUCTION)</h3>
+                
+                <h4>1. Mẫu và Lớp Mẫu (Patterns and Pattern Classes)</h4>
+                <ul>
+                    <li><strong>Mẫu (Patterns) và Đặc trưng (Features).</strong></li>
+                    <li><strong>Lớp mẫu (Pattern classes):</strong> Là một họ các mẫu có chung một số thuộc tính.</li>
+                    <li><strong>Nhận dạng mẫu (Pattern recognition):</strong> Là quá trình gán các mẫu vào các lớp tương ứng của chúng.</li>
+                </ul>
+
+                <h4>2. Các Cách Sắp Xếp Mẫu Phổ Biến (Common Pattern Arrangements)</h4>
+                <p>Trong thực tế, có ba cách sắp xếp mẫu phổ biến được sử dụng:</p>
+                <ol>
+                    <li><strong>Vectơ (Vectors):</strong> Ví dụ, tạo ra các vectơ mẫu cho các loại hình dạng nhiễu khác nhau.</li>
+                    <li><strong>Chuỗi (Strings):</strong> Mô tả chuỗi thường dựa trên sự kết nối của các phần tử cơ bản (primitives), liên quan đến hình dạng đường biên (boundary shape).</li>
+                    <li><strong>Cây (Trees).</strong></li>
+                </ol>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>II. MÁY VECTƠ HỖ TRỢ (SUPPORT VECTOR MACHINE - SVM)</h3>
+                
+                <h4>1. Mục tiêu và Siêu phẳng (Objective and Hyper-plane)</h4>
+                <ul>
+                    <li><strong>Đầu vào (Input):</strong> $D = \{(x_i, y_i) | x \in \mathbb{R}^p, y_i \in \{-1, 1\}\}$, với $i=1...N$.</li>
+                    <li><strong>Mục tiêu (Objective):</strong> Phân loại các điểm này bằng một hàm tách tuyến tính (linearly separable function) nhằm tối thiểu hóa tỷ lệ lỗi.</li>
+                    <li>SVM tìm một <strong>siêu phẳng (hyper-plane)</strong> phân chia các điểm có $y_i = 1$ khỏi các điểm có $y_i = -1$ với <strong>khoảng lề (margin)</strong> tối đa ($h$).</li>
+                    <li>Siêu phẳng được biểu diễn bởi phương trình $w^T x - b = 0$.
+                        <ul>
+                            <li>$w$ là vectơ pháp tuyến của siêu phẳng.</li>
+                            <li>$b/||w||$ xác định độ lệch (offset) của siêu phẳng so với gốc tọa độ.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>2. Bài toán Phân loại Tuyến tính (Linear Classifier)</h4>
+                <p>Điều kiện phân loại:</p>
+                $$\begin{cases} w^T x_i - b > 0 & \text{với } y_i = 1 \\ w^T x_i - b < 0 & \text{với } y_i = -1 \end{cases} \implies y_i(w^T x_i - b) > 0, i = 1...N$$
+                <p>Khoảng cách từ một điểm $x_i$ đến siêu phẳng là $h_i = y_i \frac{w^T x_i - b}{||w||}, i = 1...N$.</p>
+                <p>Mục tiêu tối ưu hóa (gốc): Tối đa hóa khoảng lề $h$:</p>
+                $$\max_{w,b} h \quad (1)$$
+                $$\text{s.t. } y_i(w^T x_i - b) \geq h ||w||, \forall i = 1...N$$
+                
+                <h4>3. Chuẩn hóa và Bài toán Tối ưu hóa Bậc hai (Quadratic Problem)</h4>
+                <p>Bằng cách chuẩn hóa $(w, b)$ sao cho $||w|| = \frac{1}{h}$, bài toán (1) tương đương với việc tối thiểu hóa norm của vectơ trọng số:</p>
+                $$\min_{w,b} ||w|| \quad (2)$$
+                $$\text{s.t. } y_i(w^T x_i - b) \geq 1, \forall i = 1...n$$
+                <p>Bài toán bậc hai tương đương:</p>
+                $$\min_{w,b} \frac{1}{2} ||w||^2 \quad (3)$$
+                $$\text{s.t. } y_i(w^T x_i - b) \geq 1, \forall i = 1...n$$
+                
+                <h4>4. Bài toán Đối ngẫu Lagrange (Lagrange Dual Problem)</h4>
+                <p>Hàm Lagrange của (3) là:</p>
+                $$L(w, b, \lambda) = \frac{1}{2} ||w||^2 - \sum_{i=1}^N \lambda_i [y_i(w^T x_i - b) - 1] \quad \text{s.t. } \lambda_i \geq 0 \quad (4)$$
+                <p>Sau khi tính toán đạo hàm riêng theo $w$ và $b$ bằng 0, ta tìm được:</p>
+                $$w = \sum_{i=1}^n \lambda_i y_i x_i \quad \text{và} \quad \sum_{i=1}^n \lambda_i y_i = 0$$
+                <p>Bài toán đối ngẫu Lagrange là:</p>
+                $$\max_{\lambda} \sum_{i=1}^n \lambda_i - \frac{1}{2} \sum_{i=1}^n \sum_{j=1}^n \lambda_i \lambda_j y_i y_j x_i^T x_j \quad (5)$$
+                $$\text{s.t. } \lambda_i \geq 0 \quad \text{và} \quad \sum_{i=1}^n \lambda_i y_i = 0$$
+
+                <h4>5. Điều kiện KKT và Vectơ Hỗ trợ (Support Vectors)</h4>
+                <p>Điều kiện Karush-Kuhn-Tucker (KTT) là $\lambda_i [y_i(w^T x_i - b) - 1] = 0, \forall i = 1...n$.</p>
+                <ul>
+                    <li>Nếu $\lambda_i = 0$: $x_i$ không tham gia vào việc tìm $(w, b)$.</li>
+                    <li>Nếu $\lambda_i \ne 0$: $y_i(w^T x_i - b) = 1$. Các điểm $x_i$ này được gọi là <strong>vectơ hỗ trợ (support vectors)</strong>.</li>
+                </ul>
+
+                <h4>6. Phân loại Tuyến tính với Khoảng lề Mềm (Soft Margin)</h4>
+                <p>Nếu tập dữ liệu không thể tách tuyến tính, chúng ta sử dụng "khoảng lề mềm" bằng cách thêm <strong>biến trượt (slack variables) $\xi_i$</strong> và tham số đánh đổi $C$.</p>
+                <p>Mục tiêu tối ưu hóa mới:</p>
+                $$\min_{w,b,\xi} \frac{1}{2} ||w||^2 + C \sum_{i=1}^n \xi_i$$
+                $$\text{s.t. } y_i(w^T x_i - b) \geq 1 - \xi_i \quad \text{và} \quad \xi_i \geq 0, \forall i = 1...n$$
+                <p>Bài toán đối ngẫu tương tự, nhưng với ràng buộc $\lambda_i$ được giới hạn trên bởi $C$: $0 \leq \lambda_i \leq C$.</p>
+            </section>
+            
+            <section id="muc3" class="content-section">
+                <h3>III. MẠNG NƠ-RON (NEURAL NETWORK - NN)</h3>
+
+                <h4>1. Khái niệm Cơ bản</h4>
+                <ul>
+                    <li><strong>Mạng nơ-ron nhân tạo (ANN):</strong> Bao gồm một tập hợp các đơn vị xử lý đơn giản giao tiếp bằng cách gửi tín hiệu cho nhau thông qua các kết nối có trọng số (weighted connections).</li>
+                </ul>
+
+                <h4>2. Cơ chế Hoạt động của ANN</h4>
+                <ol>
+                    <li><strong>Đầu vào:</strong> Các đầu vào $x_1, x_2, ..., x_m$ đi vào nơ-ron.</li>
+                    <li><strong>Trọng số:</strong> Mỗi đầu vào $x_i$ được nhân với trọng số $w_i$ tương ứng.</li>
+                    <li><strong>Tổng hợp:</strong> Tổng đầu vào có trọng số được tính: $\sum = X_1 w_1 + ... + X_m w_m = y$.</li>
+                    <li><strong>Hàm Truyền/Kích hoạt:</strong> Đầu ra $y$ là hàm của đầu vào, bị ảnh hưởng bởi trọng số và hàm truyền ($f(v_k)$).</li>
+                </ol>
+
+                <h4>3. Các Loại Hàm Kích hoạt (Activation Functions)</h4>
+                <ul>
+                    <li><strong>Hàm giới hạn cứng (Hard limiting):</strong>
+                        <ul>
+                            <li>Bipolar binary (sgn): $f(net) = \begin{cases} +1, & net > 0 \\ -1, & net < 0 \end{cases}$.</li>
+                            <li>Unipolar binary (sgn): $f(net) = \begin{cases} 1, & net > 0 \\ 0, & net < 0 \end{cases}$.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Hàm giới hạn mềm (Soft limiting - Sigmoidal):</strong>
+                        <ul>
+                            <li>Unipolar continuous (Sigmoid): $f(net) \triangleq \frac{1}{1 + \exp(-\lambda net)}$.</li>
+                            <li>Bipolar continuous (Tanh): $f(net) \triangleq \frac{2}{1 + \exp(-\lambda net)} - 1$.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>4. Học tập và Huấn luyện (Learning and Training)</h4>
+                <ul>
+                    <li><strong>Học tập (Learning):</strong> Là quá trình NN tự điều chỉnh (trọng số hoặc cấu trúc) để tạo ra phản hồi mong muốn.</li>
+                    <li><strong>Huấn luyện (Training):</strong> Là quá trình sửa đổi trọng số để đạt được đầu ra mong đợi.
+                        <ul>
+                            <li><strong>Phương pháp:</strong> Học có giám sát (Supervised), Học không giám sát (Unsupervised), Học tăng cường (Reinforcement).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>5. Điều chỉnh Trọng số và Lan truyền Ngược (Back-propagation)</h4>
+                <ul>
+                    <li><strong>Ước lượng lỗi:</strong> Sai số căn quân phương (RMSE) thường được sử dụng.</li>
+                    <li><strong>Lan truyền ngược (Back-propagation):</strong> Là một ví dụ về học có giám sát, được sử dụng ở mỗi lớp ẩn để giảm thiểu sai số.</li>
+                    <li>Công thức điều chỉnh trọng số $N_w$ (cho lớp cuối cùng):
+                        $$N_w = N_w + \Delta N_w$$
+                        $$\Delta N_w = N_{out} \cdot (1 - N_{out}) \cdot N_{ErrorFactor}$$
+                        $$N_{ErrorFactor} = N_{ExpectedOutput} – N_{ActualOutput}$$
+                    </li>
+                </ul>
+
+                <h4>6. Các Vấn đề Thiết kế (Design Issues)</h4>
+                <ul>
+                    <li><strong>Số lượng nơ-ron:</strong>
+                        <ul>
+                            <li>Nhiều nơ-ron: Chính xác hơn nhưng chậm, có nguy cơ <strong>quá khớp (over-fitting)</strong> (ghi nhớ thay vì hiểu).</li>
+                            <li>Ít nơ-ron: Độ chính xác thấp, không có khả năng học.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Kích thước tập huấn luyện:</strong> Cần đại diện cho tổng thể chung và chứa phạm vi rộng các biến thể.</li>
+                </ul>
+
+                <h4>7. Phân loại theo Kết nối (Interconnections)</h4>
+                <ul>
+                    <li><strong>Truyền thẳng (Feed forward):</strong> Đơn lớp (Single layer) hoặc Đa lớp (Multilayer).</li>
+                    <li><strong>Phản hồi/Đệ quy (Feed Back Recurrent):</strong> Đơn lớp hoặc Đa lớp.</li>
+                </ul>
+            </section>
+            
+            <section id="muc4" class="content-section">
+                <h3>IV. MẠNG NƠ-RON SÂU (DEEP NEURAL NETWORK - DNN)</h3>
+
+                <h4>1. Khái niệm Sâu và Mạng Tích chập (Deep and CNN)</h4>
+                <ul>
+                    <li><strong>Mạng Nơ-ron Tích chập (CNN):</strong> Là một loại mạng sâu, hiệu quả trong việc học các mô hình nhỏ.</li>
+                    <li><strong>Nén mẫu:</strong>
+                        <ul>
+                            <li>Một số mẫu nhỏ hơn toàn bộ hình ảnh (ví dụ: bộ phát hiện "mỏ chim").</li>
+                            <li>Cùng một mẫu có thể xuất hiện ở các vị trí khác nhau và có thể được nén lại (sử dụng cùng tham số).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>2. Cấu trúc Deep CNN</h4>
+                <p>CNN là một mạng nơ-ron có chứa các lớp tích chập và các lớp khác.</p>
+                
+                <h5>Lớp Tích chập (Convolutional layer):</h5>
+                <ul>
+                    <li>Chứa một số <strong>bộ lọc (filters)</strong> (ví dụ: 3x3) thực hiện phép toán tích chập. Đây là các tham số được học của mạng.</li>
+                    <li><strong>Phép toán tích chập:</strong> Bộ lọc trượt qua ảnh đầu vào (với khoảng cách gọi là <strong>stride</strong>), thực hiện phép nhân chấm (Dot product) tại mỗi vị trí.</li>
+                    <li>Đầu ra là <strong>Bản đồ Đặc trưng (Feature Map)</strong>.</li>
+                </ul>
+                
+                <h5>So sánh Tích chập và Kết nối Hoàn toàn (Convolution vs. Fully Connected):</h5>
+                <p>CNN nén mạng kết nối hoàn toàn theo hai cách:</p>
+                <ol>
+                    <li><strong>Giảm số lượng kết nối:</strong> Một nơ-ron chỉ kết nối với một vùng nhỏ (receptive field).</li>
+                    <li><strong>Chia sẻ trọng số (Shared weights):</strong> Cùng một bộ lọc (tham số) được áp dụng trên toàn bộ ảnh.</li>
+                </ol>
+
+                <h5>Lớp Max Pooling:</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Giảm mẫu các pixel (Subsampling) để làm cho hình ảnh nhỏ hơn, giảm độ phức tạp và số lượng tham số.</li>
+                </ul>
+                
+                <h4>3. Tổng thể Kiến trúc CNN</h4>
+                <p>Một kiến trúc CNN điển hình bao gồm việc lặp lại các lớp sau:</p>
+                <ol>
+                    <li>Convolution</li>
+                    <li>Max Pooling</li>
+                    <li>Convolution</li>
+                    <li>Max Pooling</li>
+                    <li>...</li>
+                    <li><strong>Flattened:</strong> Chuyển đổi bản đồ đặc trưng cuối cùng thành một vectơ.</li>
+                    <li><strong>Fully Connected Feedforward Network:</strong> Nhận vectơ đã làm phẳng làm đầu vào.</li>
+                </ol>
+                <p>Ví dụ về tính toán tham số: Nếu có 25 bộ lọc 3x3 trong lớp tích chập đầu tiên và đầu vào có 1 kênh (ảnh đen trắng), số lượng tham số (không tính bias) sẽ là $25 \times 9 = 225$.</p>
+
+            </section>
+            
+            <section id="muc5">
+                <div class="analogy-box">
+                    <h5><i class="bi bi-lightbulb-fill"></i> Kết luận (Phép so sánh)</h5>
+                    <p>Mạng Nơ-ron Tích chập hoạt động giống như một <strong>chiếc kính lúp kỹ thuật số</strong> tinh vi.</p>
+                    <ul>
+                        <li>Trong khi Mạng Nơ-ron truyền thống xem xét toàn bộ bức tranh một lần (giống như nhìn một bức ảnh lớn), CNN sử dụng các <strong>bộ lọc (giống như các thấu kính nhỏ)</strong> để quét và tìm kiếm các chi tiết nhỏ (patterns) ở khắp mọi nơi trong ảnh.</li>
+                        <li>Bằng cách <strong>chia sẻ các "thấu kính"</strong> này và sau đó <strong>"thu nhỏ" hình ảnh (Pooling)</strong>, CNN có thể học các đặc trưng phức tạp của hình ảnh mà vẫn giữ được sự hiệu quả về mặt tính toán, tránh bị choáng ngợp bởi lượng dữ liệu khổng lồ.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

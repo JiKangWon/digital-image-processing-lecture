@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 2: Nâng cao chất lượng ảnh trong Miền Không gian</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Tương tự Chương 1 để đảm bảo tính nhất quán) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 300px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+        .lecturer-info .name {
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Hộp tóm tắt */
+        .summary-box {
+            background: #fffbe6;
+            border-left: 5px solid #ffeb3b;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .summary-box h5 {
+            color: #b8860b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Hộp ví dụ/tương tự */
+        .analogy-box {
+            background: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.1rem;
+        }
+        .analogy-box .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .analogy-box h5 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu công thức quá dài */
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+            .content-section h3 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 2
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> I. Tổng quan và Mục tiêu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> II. Các hàm biến đổi cường độ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> III. Xử lý Lược đồ xám
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc4">
+                            <i class="bi bi-chevron-right"></i> IV. Cơ sở của Lọc Không gian
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc5">
+                            <i class="bi bi-chevron-right"></i> V. Lọc làm mịn (Lowpass)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc6">
+                            <i class="bi bi-chevron-right"></i> VI. Lọc làm sắc nét (Highpass)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc7">
+                            <i class="bi bi-chevron-right"></i> VII. Kết hợp các phương pháp
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc8">
+                            <i class="bi bi-chevron-right"></i> VIII. Bài tập và Thực hành
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>Chương 2: Nâng cao chất lượng ảnh trong miền Không gian</h1>
+                <h2>Môn học: Xử lý ảnh (Image Enhancement in Spatial Domain)</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong class="name">Giảng viên:</strong> PGS.TS. Hoàng Văn Dũng</p>
+                    <p><strong>Khoa:</strong> Công nghệ Thông tin</p>
+                    <p><strong>Email:</strong> <code>dunghv@hcmute.edu.vn</code></p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>I. TỔNG QUAN VÀ MỤC TIÊU (BACKGROUND)</h3>
+                
+                <h4>1. Mục tiêu Nâng cao Chất lượng Ảnh (Image Enhancement)</h4>
+                <p>Mục tiêu của nâng cao chất lượng ảnh là xử lý một ảnh sao cho kết quả phù hợp hơn so với ảnh gốc cho một ứng dụng cụ thể nào đó.</p>
+
+                <h4>2. Các Phương pháp Tiếp cận Chính</h4>
+                <p>Có hai phương pháp chính để nâng cao chất lượng ảnh:</p>
+                <ul>
+                    <li><strong>Nâng cao chất lượng ảnh trong miền không gian (Spatial domain):</strong> Thao tác trực tiếp trên các pixel của ảnh.
+                        <ul>
+                            <li><strong>Xử lý điểm (Point processing):</strong> Thay đổi cường độ pixel. (Ví dụ: Ảnh âm bản, kéo dài độ tương phản).</li>
+                            <li><strong>Lọc không gian (Spatial filtering).</strong></li>
+                        </ul>
+                    </li>
+                    <li><strong>Nâng cao chất lượng ảnh trong miền tần số (Frequency domain):</strong> Thay đổi biến đổi Fourier của ảnh.</li>
+                </ul>
+
+                <h4>3. Các Phép Toán Không gian (Spatial Operations)</h4>
+                <p>Các phép toán không gian bao gồm:</p>
+                <ul>
+                    <li><strong>Thao tác trên một pixel đơn lẻ (Intensity Transformation):</strong> Ảnh âm bản, kéo dài độ tương phản, v.v.</li>
+                    <li><strong>Thao tác lân cận (Neighborhood operations):</strong> Bộ lọc trung bình, lọc trung vị (median filtering), v.v.</li>
+                    <li><strong>Biến đổi hình học không gian (Geometric spatial transformations):</strong> Phóng/Thu (Scaling), Xoay (Rotation), Dịch chuyển (Translations), v.v.</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>II. CÁC HÀM BIẾN ĐỔI CƯỜNG ĐỘ CƠ BẢN</h3>
+                
+                <h4>1. Ảnh Âm Bản (Negative Image)</h4>
+                <p><strong>Công thức:</strong> Ảnh âm bản của một ảnh có mức cường độ trong dải $[0, L – 1]$ được tính bằng hàm biến đổi âm bản:</p>
+                $$s = L – 1 – r$$
+                <p>Trong đó: $r$ là giá trị cường độ đầu vào, $s$ là giá trị cường độ đầu ra, và $L$ là mức cường độ cao nhất (ví dụ: $L=256$ cho ảnh 8-bit, $L-1=255$).</p>
+                <p><strong>Ứng dụng:</strong> Thích hợp để tăng cường các chi tiết màu trắng hoặc xám nằm trong các vùng tối của ảnh, đặc biệt khi các vùng đen chiếm ưu thế về kích thước. (Ví dụ: Ảnh chụp X-quang).</p>
+                <p><strong>Ví dụ Code (OpenCV):</strong> Áp dụng <code>dst = max - grey</code>, với $max$ là mức cường độ cao nhất.</p>
+
+                <h4>2. Biến đổi Logarit (Log Transformations)</h4>
+                <p><strong>Công thức:</strong></p>
+                $$s = c \log(1 + r)$$
+                <p>với $c$ là hằng số và $r \geq 0$.</p>
+                <p><strong>Đặc điểm:</strong></p>
+                <ul>
+                    <li>Nó ánh xạ một dải hẹp các giá trị cường độ thấp đầu vào thành một dải rộng các mức đầu ra.</li>
+                    <li>Mở rộng giá trị của các pixel tối trong ảnh, đồng thời nén các giá trị mức cường độ cao hơn.</li>
+                    <li>Hữu ích để nén dải động (dynamic range) của các ảnh có sự biến thiên lớn về giá trị pixel.</li>
+                </ul>
+
+                <h4>3. Biến đổi Hàm Mũ (Power Law/Gamma Transformations)</h4>
+                <p><strong>Công thức:</strong></p>
+                $$s = c r^\gamma$$
+                <p>$c$ và $\gamma$ là các hằng số dương. Đôi khi được viết là $s=c(r +\epsilon)^\gamma$.</p>
+                <p><strong>Đặc điểm:</strong></p>
+                <ul>
+                    <li>Nếu $\mathbf{0 < \gamma < 1}$ (giá trị phân số), nó ánh xạ một dải hẹp các giá trị đầu vào tối thành một dải rộng hơn các giá trị đầu ra (mở rộng mức cường độ). Điều này hữu ích nếu ảnh chủ yếu là tối.</li>
+                    <li>Nếu $\mathbf{\gamma > 1}$, điều ngược lại xảy ra (nén mức cường độ). Điều này hữu ích nếu ảnh có vẻ quá sáng (washed-out appearance).</li>
+                    <li>Nếu $\mathbf{c = \gamma = 1}$, đó là phép biến đổi đồng nhất (identity transformation).</li>
+                </ul>
+                <p><strong>Hiệu chỉnh Gamma (Gamma Correction):</strong> Là quá trình được sử dụng để hiệu chỉnh phản ứng luật lũy thừa của các thiết bị chụp, in, và hiển thị ảnh. Giá trị Gamma phụ thuộc vào thiết bị.</p>
+                <p><strong>Ứng dụng:</strong> Hữu ích cho việc thao tác độ tương phản nói chung.</p>
+
+                <h4>4. Biến đổi Tuyến tính Từng phần (Piecewise-Linear Transformation)</h4>
+                <p>Biến đổi tuyến tính từng phần bao gồm ba kỹ thuật chính:</p>
+                
+                <h5>Kéo dài Độ tương phản (Contrast Stretching):</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Mở rộng dải mức cường độ trong ảnh để nó kéo dài toàn bộ dải cường độ của thiết bị hiển thị.</li>
+                    <li>Áp dụng cho các ảnh có độ tương phản thấp.</li>
+                    <li>Được thực hiện bằng cách đặt $(r_1, s_1) = (r_{min}, 0)$ và $(r_2, s_2) = (r_{max}, L-1)$.</li>
+                </ul>
+
+                <h5>Cắt Mức Cường độ (Intensity Level Slicing):</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Làm nổi bật một dải cường độ cụ thể trong ảnh.</li>
+                    <li>Nâng cao các đặc điểm như khối nước trong ảnh vệ tinh hoặc khuyết tật trong ảnh X-quang.</li>
+                </ul>
+
+                <h5>Cắt Mặt phẳng Bit (Bit Plane Slicing):</h5>
+                <ul>
+                    <li><strong>Mục đích:</strong> Làm nổi bật sự đóng góp của các bit cụ thể đối với sự xuất hiện tổng thể của ảnh.</li>
+                    <li>Một ảnh thang xám 256 mức (8-bit) có thể được coi là gồm tám mặt phẳng 1-bit, với mặt phẳng 1 chứa LSB và mặt phẳng 8 chứa MSB.</li>
+                </ul>
+            </section>
+
+            <section id="muc3" class="content-section">
+                <h3>III. XỬ LÝ LƯỢC ĐỒ XÁM (HISTOGRAM PROCESSING)</h3>
+
+                <h4>1. Khái niệm Lược đồ Xám</h4>
+                <p><strong>Định nghĩa:</strong> Lược đồ xám (Histogram) của một ảnh kỹ thuật số với các mức cường độ trong dải $[0, L-1]$ là một hàm rời rạc $h(r_k) = n_k$, trong đó $r_k$ là giá trị cường độ thứ $k$ và $n_k$ là số lượng pixel trong ảnh có cường độ $r_k$.</p>
+                
+                <p><strong>Lược đồ Chuẩn hóa (Normalized Histogram):</strong></p>
+                $$p(r_k) = \frac{n_k}{MN}$$
+                <p>với $M \times N$ là kích thước ảnh.</p>
+                <p><strong>Ứng dụng:</strong> Thao tác lược đồ xám được sử dụng để nâng cao chất lượng ảnh, cũng như trong nén ảnh và phân đoạn ảnh.</p>
+
+                <h4>2. Cân bằng Lược đồ Xám (Histogram Equalization)</h4>
+                <ul>
+                    <li><strong>Mục tiêu:</strong> Là một phương pháp điều chỉnh độ tương phản bằng cách sử dụng lược đồ xám của ảnh. Đây là một trong những phương pháp tốt nhất để nâng cao chất lượng ảnh.</li>
+                    <li><strong>Nguyên lý:</strong> Tự động xác định một hàm biến đổi để tạo ra một lược đồ xám đồng nhất (uniform histogram).</li>
+                </ul>
+
+                <h4>3. Khớp Lược đồ Xám (Histogram Matching/Specification)</h4>
+                <ul>
+                    <li><strong>Mục tiêu:</strong> Khi việc dựa vào lược đồ đồng nhất không phải là cách tiếp cận tốt nhất, phương pháp này cho phép người dùng chỉ định hình dạng lược đồ xám mong muốn cho ảnh đã xử lý.</li>
+                </ul>
+
+                <h4>4. Xử lý Lược đồ Xám Cục bộ (Local Histogram Processing)</h4>
+                <ul>
+                    <li><strong>Mục tiêu:</strong> Nâng cao chi tiết trên các khu vực nhỏ trong ảnh, thay vì áp dụng biến đổi dựa trên phân bố cường độ của toàn bộ ảnh (Global processing).</li>
+                </ul>
+            </section>
+
+            <section id="muc4" class="content-section">
+                <h3>IV. CƠ SỞ CỦA LỌC KHÔNG GIAN (FUNDAMENTALS OF SPATIAL FILTERING)</h3>
+
+                <h4>1. Định nghĩa Lọc Không gian</h4>
+                <ul>
+                    <li><strong>Bộ lọc không gian (Spatial filter)</strong> là một thao tác bao gồm (1) vùng lân cận nhỏ (small window/mask/kernel) và (2) một phép toán xác định trước được thực hiện trên các pixel trong vùng lân cận đó.</li>
+                    <li><strong>Bộ lọc không gian tuyến tính (Linear spatial filter)</strong> thực hiện phép toán tổng-của-tích giữa một ảnh $f$ và một nhân lọc $w$.</li>
+                </ul>
+
+                <h4>2. Tương quan và Tích chập (Correlation & Convolution)</h4>
+                <ul>
+                    <li><strong>Tương quan (Correlation):</strong> Là quá trình di chuyển mặt nạ lọc (filter mask) trên ảnh và tính tổng các tích tại mỗi vị trí.</li>
+                    <li><strong>Tích chập (Convolution):</strong> Quá trình tương tự như tương quan, ngoại trừ việc nhân lọc (filter) phải được xoay 180 độ trước khi tính tổng các tích.</li>
+                    <li><strong>Ghi chú quan trọng:</strong> Nếu các giá trị của nhân lọc đối xứng qua tâm của nó, tương quan và tích chập sẽ cho kết quả giống nhau.</li>
+                </ul>
+            </section>
+            
+            <section id="muc5" class="content-section">
+                <h3>V. LỌC LÀM MỊN (SMOOTHING/LOWPASS SPATIAL FILTERS)</h3>
+                
+                <h4>1. Tổng quan</h4>
+                <ul>
+                    <li>Bộ lọc làm mịn còn được gọi là bộ lọc trung bình hoặc <strong>Bộ lọc thông thấp (Lowpass filter)</strong>.</li>
+                    <li><strong>Mục tiêu:</strong> Giảm các chuyển tiếp "sắc nét" về cường độ.</li>
+                    <li><strong>Ứng dụng:</strong> Làm mờ (blurring) và giảm nhiễu (noise reduction).</li>
+                    <li><strong>Tác dụng phụ:</strong> Các cạnh (Edges) cũng được đặc trưng bởi chuyển tiếp cường độ sắc nét, do đó bộ lọc trung bình có nhược điểm là làm mờ các cạnh.</li>
+                </ul>
+                
+                <h4>2. Bộ lọc Trung bình/Hộp (Averaging/Box Filter)</h4>
+                <ul>
+                    <li><strong>Nguyên lý:</strong> Thay thế giá trị của mỗi pixel bằng giá trị trung bình của mức cường độ trong vùng lân cận được xác định bởi mặt nạ lọc.</li>
+                </ul>
+
+                <h4>3. Bộ lọc Gaussian</h4>
+                <ul>
+                    <li><strong>Nguyên lý:</strong> Là một dạng bộ lọc trung bình có trọng số, dựa trên sự phân bố Gaussian trong 2D.</li>
+                    <li>Cung cấp kết quả làm mịn mượt mà hơn so với bộ lọc Hộp.</li>
+                    <li><strong>Ứng dụng:</strong> Giảm nhiễu, làm mờ, hiệu chỉnh bóng.</li>
+                </ul>
+
+                <h4>4. Bộ lọc Thống kê Thứ tự (Order-Statistic/Nonlinear Filters)</h4>
+                <p>Phản ứng của bộ lọc dựa trên việc sắp xếp (ranking) các pixel trong vùng lân cận. Giá trị pixel trung tâm được thay thế bằng giá trị được xác định từ kết quả xếp hạng.</p>
+
+                <h5>Bộ lọc Trung vị (Median Filter):</h5>
+                <ul>
+                    <li><strong>Nguyên lý:</strong> Thay thế giá trị pixel trung tâm bằng giá trị trung vị (median) của các giá trị cường độ trong vùng lân cận đó.</li>
+                    <li><strong>Đặc điểm:</strong> Là bộ lọc phi tuyến (non-linear).</li>
+                    <li><strong>Ứng dụng chính:</strong> Được sử dụng để loại bỏ nhiễu xung (impulse noise) hoặc nhiễu muối tiêu (salt-pepper noise).</li>
+                </ul>
+
+                <h5>Bộ lọc Max/Min:</h5>
+                <ul>
+                    <li><strong>Max filter (Lọc cực đại):</strong> Sử dụng giá trị percentile thứ 100.</li>
+                    <li><strong>Min filter (Lọc cực tiểu):</strong> Sử dụng giá trị percentile thứ 0.</li>
+                </ul>
+                
+                <h5>Bộ lọc Điểm giữa (Midpoint filter):</h5>
+                <ul>
+                    <li>Trả về giá trị mới là giá trị trung bình của Min và Max trong nhân lọc $n \times n$.</li>
+                </ul>
+            </section>
+            
+            <section id="muc6" class="content-section">
+                <h3>VI. LỌC LÀM SẮC NÉT (SHARPENING/HIGHPASS SPATIAL FILTERS)</h3>
+                
+                <h4>1. Tổng quan</h4>
+                <ul>
+                    <li><strong>Mục tiêu:</strong> Làm nổi bật các chuyển tiếp cường độ (ví dụ: các cạnh).</li>
+                    <li><strong>Ứng dụng:</strong> In ấn, hình ảnh y tế, kiểm tra công nghiệp.</li>
+                    <li><strong>Nguyên lý:</strong> Quá trình làm sắc nét tương tự như phép vi phân không gian (spatial differentiation), trong khi làm mịn tương tự như phép tích phân.</li>
+                </ul>
+
+                <h4>2. Đạo hàm Bậc nhất và Bậc hai</h4>
+                <h5>Đạo hàm Bậc nhất (First order derivative):</h5>
+                <ul>
+                    <li>Phải bằng 0 ở các vùng cường độ không đổi.</li>
+                    <li>Phải khác 0 ở các cạnh bước hoặc dốc.</li>
+                    <li>Công thức rời rạc 1D: $f(x+1) – f(x)$.</li>
+                </ul>
+
+                <h5>Đạo hàm Bậc hai (Second order derivative):</h5>
+                <ul>
+                    <li>Phải bằng 0 ở các vùng cường độ không đổi.</li>
+                    <li>Phải khác 0 ở các cạnh bước.</li>
+                    <li>Phải bằng 0 dọc theo các dốc có độ dốc không đổi.</li>
+                    <li>Công thức rời rạc 1D: $f(x+1) + f(x-1) - 2f(x)$.</li>
+                </ul>
+                
+                <h4>3. Bộ lọc Laplacian (Sử dụng Đạo hàm Bậc hai)</h4>
+                <p>Laplacian là toán tử vi phân isotropic bậc hai đơn giản nhất.</p>
+                <p><strong>Công thức làm sắc nét:</strong></p>
+                $$g(x,y) = f(x,y) + c \cdot [\text{Laplacian}]$$
+                <p>Trong đó $f(x,y)$ là ảnh đầu vào và $g(x,y)$ là ảnh được làm sắc nét. $c = -1$ nếu sử dụng các nhân Laplacian âm; $c = 1$ nếu sử dụng các nhân Laplacian dương.</p>
+                
+                <h4>4. Mặt nạ làm sắc nét và Lọc tăng cường cao (Unsharp Masking and High Boost Filtering)</h4>
+                <p>Các phương pháp này dựa trên việc sử dụng một mặt nạ được tạo ra từ sự khác biệt giữa ảnh gốc và ảnh đã làm mờ.</p>
+                
+                <h5>Unsharp Masking:</h5>
+                <ul>
+                    <li>Mặt nạ (Mask) $= f(x,y) – f'(x,y)$ (với $f'$ là ảnh làm mờ).</li>
+                    <li>Ảnh làm sắc nét $g(x,y) = f(x,y) + Mask$.</li>
+                </ul>
+                
+                <h5>High Boost Filtering (Lọc tăng cường cao):</h5>
+                <p>Sử dụng công thức tương tự nhưng với hệ số tăng cường $k > 1$:</p>
+                $$g(x,y) = f(x,y) + k \cdot Mask$$
+
+                <h4>5. Đạo hàm Bậc nhất – Gradient</h4>
+                <ul>
+                    <li>Sử dụng toán tử đạo hàm bậc nhất, ví dụ Roberts cross-gradient operators và Sobel operators.</li>
+                    <li>Đặc điểm của nhân lọc đạo hàm: Tất cả các hệ số trong nhân lọc đều bằng 0.</li>
+                </ul>
+            </section>
+
+            <section id="muc7" class="content-section">
+                <h3>VII. KẾT HỢP CÁC PHƯƠNG PHÁP NÂNG CAO CHẤT LƯỢNG ẢNH</h3>
+                <p>Trong thực tế, nhiều phương pháp nâng cao chất lượng ảnh được kết hợp để đạt được kết quả tối ưu (Ví dụ: Kết hợp Laplacian (làm sắc nét) + Sobel (gradient) + Lọc Gaussian (làm mịn nhiễu) + Biến đổi Gamma (điều chỉnh tương phản cuối cùng)).</p>
+            </section>
+            
+            <section id="muc8" class="content-section">
+                <h3>VIII. BÀI TẬP VÀ THỰC HÀNH</h3>
+                <p>Đây là các bài tập được đề xuất từ nguồn tài liệu để củng cố kiến thức:</p>
+                <ol>
+                    <li>Thực hiện lần lượt các phép lọc trung bình (3x3), lọc Sobel (3x3) trên ảnh gốc và hiển thị kết quả.</li>
+                    <li>Thực hiện các phép lọc trung vị, Gaussian, max/min trên ảnh gốc với kích thước bộ lọc 7x7.</li>
+                    <li>Giải thích tại sao hàm lọc trung bình là hàm tuyến tính nhưng hàm lọc trung vị lại là hàm phi tuyến.</li>
+                    <li>Thực hiện thay đổi độ tương phản ảnh bằng phương pháp biến đổi độ tương phản (Contrast Stretching), thử nghiệm với các tham số khác nhau để làm rõ hoặc làm mờ đối tượng, và nhận xét kết quả.</li>
+                    <li>So sánh tính chất của hàm trung bình và hàm trung vị. Trường hợp nào nên sử dụng loại lọc nào.</li>
+                    <li>Giải thích tại sao phương pháp lọc Gaussian thường được xem là phương pháp trung bình có trọng số.</li>
+                    <li>Thực hiện lọc làm mịn ảnh bằng phương pháp Gaussian, thử nghiệm các giá trị độ lệch chuẩn ($\sigma$) và kích thước lọc khác nhau, và xác định cách chọn giá trị $\sigma$ và kích thước phù hợp.</li>
+                    <li>Viết chương trình áp dụng từng phép lọc Gaussian, Sobel, Trung bình, Min, Max, Midpoint riêng biệt trên ảnh gốc, hiển thị ảnh kết quả và nhận xét.</li>
+                    <li>Thêm nhiễu muối tiêu vào ảnh gốc, sau đó áp dụng từng phép lọc Gaussian, Trung bình, Trung vị riêng biệt để giảm nhiễu, hiển thị kết quả và nhận xét.</li>
+                    <li>Viết chương trình tính lược đồ mức xám của một ảnh và tiến hành cân bằng sáng bằng lược đồ mức xám theo các giá trị cân bằng khác nhau.</li>
+                </ol>
+            </section>
+
+            <div class="summary-box">
+                <h5><i class="bi bi-bookmark-star-fill"></i> Tóm tắt cốt lõi</h5>
+                <p>Chương này tập trung vào việc thay đổi các giá trị pixel trong miền không gian để cải thiện chất lượng ảnh. Các kỹ thuật chính được chia thành hai nhóm: <strong>Biến đổi cường độ</strong> (thay đổi giá trị pixel dựa trên chính giá trị đó, ví dụ: Gamma, Log, Negative) và <strong>Lọc không gian</strong> (thay đổi giá trị pixel dựa trên các giá trị lân cận, bao gồm Lọc làm mịn như Median/Gaussian và Lọc làm sắc nét như Laplacian/Sobel). <strong>Xử lý Lược đồ Xám</strong> (Histogram Processing) là một công cụ mạnh mẽ để điều chỉnh độ tương phản, hoạt động bằng cách tái phân phối các mức cường độ pixel.</p>
+            </div>
+
+            <div class="analogy-box">
+                <h5><i class="bi bi-lightbulb-fill"></i> Tương tự</h5>
+                <p>Có thể xem việc nâng cao chất lượng ảnh trong miền không gian như là việc <strong>"trang điểm"</strong> cho một bức ảnh.</p>
+                <ul>
+                    <li><strong>Các biến đổi cường độ</strong> (như Gamma hoặc Log) giống như việc điều chỉnh độ sáng, độ bão hòa, hoặc độ tương phản chung của toàn bộ bức ảnh (Global adjustment).</li>
+                    <li><strong>Các bộ lọc không gian (Spatial Filters)</strong> giống như việc sử dụng các công cụ chỉnh sửa chi tiết: <strong>bộ lọc làm mịn (Lowpass)</strong> giúp xóa mờ mụn hoặc nếp nhăn (giảm nhiễu), còn <strong>bộ lọc làm sắc nét (Highpass)</strong> giúp làm nổi bật đôi mắt hoặc các đường nét chính (tăng cường cạnh).</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
