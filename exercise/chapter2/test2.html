@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đề Kiểm Tra Trắc Nghiệm - Xử Lý Ảnh Cơ Bản</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
@@ -21,7 +22,7 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* CSS tùy chỉnh cho trang đề thi */
+        /* CSS tùy chỉnh cho trang đề thi tương tác */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
         body {
@@ -56,6 +57,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin-bottom: 1.5rem;
+            overflow: hidden; /* Giữ bo góc cho phần giải thích */
         }
         .question-header {
             background-color: #f8f9fa;
@@ -78,17 +80,57 @@
             padding: 0.5rem 0.75rem;
             margin-bottom: 0.5rem;
             border-radius: 6px;
-            transition: background-color 0.2s ease;
-        }
-        .form-check:hover {
-            background-color: #f4f7f6;
         }
         .form-check-label {
             margin-left: 0.5rem;
         }
-        .submit-button {
-            text-align: center;
-            margin-top: 2rem;
+        
+        /* CSS cho thẻ <details> và <summary> (Tính năng hiện đáp án) */
+        .answer-details {
+            margin-top: 1.5rem;
+        }
+        .answer-summary {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            background-color: #e9f0f7;
+            color: #0056b3;
+            display: inline-block;
+            list-style: none; /* Ẩn mũi tên mặc định của <summary> */
+            transition: background-color 0.2s ease;
+        }
+        .answer-summary::-webkit-details-marker {
+            display: none; /* Ẩn mũi tên trên Chrome/Safari */
+        }
+        .answer-summary:hover {
+            background-color: #d8e4f0;
+        }
+        .answer-summary::before {
+            content: '► Xem Đáp án & Giải thích'; /* Dấu mũi tên tùy chỉnh */
+        }
+        .answer-details[open] > .answer-summary::before {
+            content: '▼ Ẩn Đáp án'; /* Thay đổi nội dung khi mở */
+        }
+        .explanation-box {
+            background-color: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+        .correct-answer {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #198754; /* Màu xanh lá */
+        }
+        .explanation {
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .explanation h6 {
+            font-weight: 700;
+            color: #0056b3;
         }
     </style>
 </head>
@@ -96,353 +138,676 @@
 
     <div class="container exam-container">
         <header class="exam-header">
-            <h1>ĐỀ KIỂM TRA TRẮC NGHIỆM</h1>
+            <h1>ĐỀ KIỂM TRA TRẮC NGHIỆM TƯƠNG TÁC</h1>
             <p class="mt-2">Môn: Xử Lý Ảnh Cơ Bản (30 Câu)</p>
         </header>
 
-        <form id="quizForm">
-            
-            <h3 class="h4 mb-3" style="color: #004a99; font-weight:700;">PHẦN I: CÁC PHÉP TOÁN TRÊN ĐIỂM ẢNH</h3>
+        <h3 class="h4 mb-3" style="color: #004a99; font-weight:700;">PHẦN I: CÁC PHÉP TOÁN TRÊN ĐIỂM ẢNH</h3>
 
-            <div class="question-card">
-                <div class="question-header">Câu 1</div>
-                <div class="question-body">
-                    <div class="question-text">Mục tiêu của việc nâng cao chất lượng ảnh (Image Enhancement) là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q1" id="q1a"><label class="form-check-label" for="q1a">A. Xử lý ảnh để tạo ra kết quả phù hợp hơn so với ảnh gốc cho một ứng dụng cụ thể.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q1" id="q1b"><label class="form-check-label" for="q1b">B. Thay đổi kích thước hoặc xoay ảnh (Geometric spatial transformations).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q1" id="q1c"><label class="form-check-label" for="q1c">C. Thay đổi Fourier Transform của ảnh (Frequency domain).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q1" id="q1d"><label class="form-check-label" for="q1d">D. Loại bỏ tất cả nhiễu trong ảnh.</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 1</div>
+            <div class="question-body">
+                <div class="question-text">Mục tiêu của việc nâng cao chất lượng ảnh (Image Enhancement) là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q1"><label class="form-check-label">A. Xử lý ảnh để tạo ra kết quả phù hợp hơn so với ảnh gốc cho một ứng dụng cụ thể.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q1"><label class="form-check-label">B. Thay đổi kích thước hoặc xoay ảnh (Geometric spatial transformations).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q1"><label class="form-check-label">C. Thay đổi Fourier Transform của ảnh (Frequency domain).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q1"><label class="form-check-label">D. Loại bỏ tất cả nhiễu trong ảnh.</label></div>
+                
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: A</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là định nghĩa chuẩn của Nâng cao chất lượng ảnh. Mục tiêu là cải thiện ảnh cho một <strong>ứng dụng cụ thể</strong> (ví dụ: làm rõ hơn cho mắt người nhìn hoặc cho một thuật toán khác), chứ không nhất thiết phải loại bỏ toàn bộ nhiễu (D) hay chỉ thay đổi hình học (B).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 2</div>
-                <div class="question-body">
-                    <div class="question-text">Phương pháp nâng cao chất lượng ảnh trong miền không gian (Spatial Domain) bao gồm những loại phép toán nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q2" id="q2a"><label class="form-check-label" for="q2a">A. Chỉ lọc không gian (Spatial filtering).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q2" id="q2b"><label class="form-check-label" for="q2b">B. Chỉ biến đổi Fourier.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q2" id="q2c"><label class="form-check-label" for="q2c">C. Thao tác trực tiếp trên điểm ảnh (Point processing) và Lọc không gian (Spatial filtering).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q2" id="q2d"><label class="form-check-label" for="q2d">D. Biến đổi Hình học và Phép xoay.</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 2</div>
+            <div class="question-body">
+                <div class="question-text">Phương pháp nâng cao chất lượng ảnh trong miền không gian (Spatial Domain) bao gồm những loại phép toán nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q2"><label class="form-check-label">A. Chỉ lọc không gian (Spatial filtering).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q2"><label class="form-check-label">B. Chỉ biến đổi Fourier.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q2"><label class="form-check-label">C. Thao tác trực tiếp trên điểm ảnh (Point processing) và Lọc không gian (Spatial filtering).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q2"><label class="form-check-label">D. Biến đổi Hình học và Phép xoay.</label></div>
+                
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Theo tài liệu (Chương 2), xử lý miền không gian (thao tác trực tiếp trên pixel) bao gồm 2 loại chính: (1) Thao tác trên một pixel đơn lẻ (Point processing, $s=T(r)$) và (2) Thao tác lân cận (Neighborhood operations / Spatial filtering).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 3</div>
-                <div class="question-body">
-                    <div class="question-text">Phép biến đổi Ảnh Âm Bản (Negative Image) cho ảnh có mức cường độ trong khoảng $[0, L – 1]$ được tính bằng công thức nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q3" id="q3a"><label class="form-check-label" for="q3a">A. $s = L + 1 – r$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q3" id="q3b"><label class="form-check-label" for="q3b">B. $s = L – 1 – r$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q3" id="q3c"><label class="form-check-label" for="q3c">C. $s = c \log(1 + r)$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q3" id="q3d"><label class="form-check-label" for="q3d">D. $s = c r^\gamma$</label></div>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-header">Câu 4</div>
-                <div class="question-body">
-                    <div class="question-text">Phép biến đổi Ảnh Âm Bản đặc biệt phù hợp để tăng cường chi tiết nào trong ảnh?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q4" id="q4a"><label class="form-check-label" for="q4a">A. Chi tiết trắng hoặc xám nhúng trong các vùng sáng.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q4" id="q4b"><label class="form-check-label" for="q4b">B. Chi tiết trắng hoặc xám nhúng trong các vùng tối, đặc biệt khi các vùng đen chiếm ưu thế về kích thước.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q4" id="q4c"><label class="form-check-label" for="q4c">C. Mức cường độ trung bình của ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q4" id="q4d"><label class="form-check-label" for="q4d">D. Độ tương phản toàn cục của ảnh.</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 3</div>
+            <div class="question-body">
+                <div class="question-text">Phép biến đổi Ảnh Âm Bản (Negative Image) cho ảnh có mức cường độ trong khoảng $[0, L – 1]$ được tính bằng công thức nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q3"><label class="form-check-label">A. $s = L + 1 – r$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q3"><label class="form-check-label">B. $s = L – 1 – r$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q3"><label class="form-check-label">C. $s = c \log(1 + r)$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q3"><label class="form-check-label">D. $s = c r^\gamma$</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 5</div>
-                <div class="question-body">
-                    <div class="question-text">Công thức chung của Biến đổi Logarit (Log Transformations) là gì (với $c$ là hằng số và $r \geq 0$)?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q5" id="q5a"><label class="form-check-label" for="q5a">A. $s = L – 1 – r$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q5" id="q5b"><label class="form-check-label" for="q5b">B. $s = c r^\gamma$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q5" id="q5c"><label class="form-check-label" for="q5c">C. $s = c \log(1 + r)$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q5" id="q5d"><label class="form-check-label" for="q5d">D. $s = c (r + \epsilon)^\gamma$</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là công thức chuẩn cho phép biến đổi âm bản, đảo ngược giá trị cường độ. $L-1$ là giá trị cường độ tối đa (ví dụ: 255 cho ảnh 8-bit, $L=256$).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
-
-            <div class="question-card">
-                <div class="question-header">Câu 6</div>
-                <div class="question-body">
-                    <div class="question-text">Biến đổi Logarit có tác dụng gì đối với các mức cường độ thấp (dark pixels) trong ảnh?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q6" id="q6a"><label class="form-check-label" for="q6a">A. Nén các giá trị cường độ thấp.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q6" id="q6b"><label class="form-check-label" for="q6b">B. Không ảnh hưởng đến các giá trị cường độ thấp.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q6" id="q6c"><label class="form-check-label" for="q6c">C. Mở rộng (expands) một dải hẹp các giá trị cường độ thấp đầu vào thành một dải rộng hơn ở đầu ra.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q6" id="q6d"><label class="form-check-label" for="q6d">D. Nén dải cường độ động (dynamic range).</label></div>
-                </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 4</div>
+            <div class="question-body">
+                <div class="question-text">Phép biến đổi Ảnh Âm Bản đặc biệt phù hợp để tăng cường chi tiết nào trong ảnh?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q4"><label class="form-check-label">A. Chi tiết trắng hoặc xám nhúng trong các vùng sáng.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q4"><label class="form-check-label">B. Chi tiết trắng hoặc xám nhúng trong các vùng tối, đặc biệt khi các vùng đen chiếm ưu thế về kích thước.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q4"><label class="form-check-label">C. Mức cường độ trung bình của ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q4"><label class="form-check-label">D. Độ tương phản toàn cục của ảnh.</label></div>
+                
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Khi đảo ngược (Negative), vùng tối (đen) chiếm ưu thế sẽ trở thành vùng sáng, và các chi tiết trắng/xám nhạt (nay trở thành đen/xám tối) sẽ nổi bật trên nền sáng đó. (Ví dụ: ảnh X-quang).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 7</div>
-                <div class="question-body">
-                    <div class="question-text">Công thức chung của Biến đổi Luật Lũy Thừa (Power Law / Gamma Transformations) là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q7" id="q7a"><label class="form-check-label" for="q7a">A. $s = c \log(1 + r)$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q7" id="q7b"><label class="form-check-label" for="q7b">B. $s = L – 1 – r$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q7" id="q7c"><label class="form-check-label" for="q7c">C. $s = c r^\gamma$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q7" id="q7d"><label class="form-check-label" for="q7d">D. $s = M N / n_k$</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 5</div>
+            <div class="question-body">
+                <div class="question-text">Công thức chung của Biến đổi Logarit (Log Transformations) là gì (với $c$ là hằng số và $r \geq 0$)?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q5"><label class="form-check-label">A. $s = L – 1 – r$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q5"><label class="form-check-label">B. $s = c r^\gamma$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q5"><label class="form-check-label">C. $s = c \log(1 + r)$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q5"><label class="form-check-label">D. $s = c (r + \epsilon)^\gamma$</label></div>
+                
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là công thức chuẩn của Biến đổi Logarit. Sử dụng $1+r$ để tránh $\log(0)$ khi $r=0$.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 8</div>
-                <div class="question-body">
-                    <div class="question-text">Trong Biến đổi Luật Lũy Thừa $s = c r^\gamma$, nếu giá trị $\gamma < 1$ (ví dụ $\gamma = 0.4$), thì phép biến đổi này có tác dụng gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q8" id="q8a"><label class="form-check-label" for="q8a">A. Nén dải cường độ thấp và làm ảnh tối đi.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q8" id="q8b"><label class="form-check-label" for="q8b">B. Mở rộng các giá trị cường độ thấp (dark input values).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q8" id="q8c"><label class="form-check-label" for="q8c">C. Tăng cường các giá trị cường độ cao.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q8" id="q8d"><label class="form-check-label" for="q8d">D. Trở thành phép biến đổi đồng nhất (identity transformation).</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 6</div>
+            <div class="question-body">
+                <div class="question-text">Biến đổi Logarit có tác dụng gì đối với các mức cường độ thấp (dark pixels) trong ảnh?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q6"><label class="form-check-label">A. Nén các giá trị cường độ thấp.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q6"><label class="form-check-label">B. Không ảnh hưởng đến các giá trị cường độ thấp.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q6"><label class="form-check-label">C. Mở rộng (expands) một dải hẹp các giá trị cường độ thấp đầu vào thành một dải rộng hơn ở đầu ra.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q6"><label class="form-check-label">D. Nén dải cường độ động (dynamic range).</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đặc tính của hàm log là nó tăng rất nhanh ở gần 0 và tăng chậm dần khi giá trị lớn hơn. Điều này giúp "kéo giãn" (mở rộng) các chi tiết ở vùng tối (cường độ thấp) và "nén" các chi tiết ở vùng sáng (cường độ cao).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 9</div>
-                <div class="question-body">
-                    <div class="question-text">Khi ảnh bị mờ hoặc quá sáng (washed-out appearance), người ta nên sử dụng giá trị $\gamma$ như thế nào trong Biến đổi Luật Lũy Thừa để nén các mức cường độ?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q9" id="q9a"><label class="form-check-label" for="q9a">A. $\gamma = 1$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q9" id="q9b"><label class="form-check-label" for="q9b">B. $\gamma < 1$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q9" id="q9c"><label class="form-check-label" for="q9c">C. $\gamma > 1$ (ví dụ: $\gamma = 3.0, 4.0, 5.0$).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q9" id="q9d"><label class="form-check-label" for="q9d">D. $\gamma$ phải là một số âm.</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 7</div>
+            <div class="question-body">
+                <div class="question-text">Công thức chung của Biến đổi Luật Lũy Thừa (Power Law / Gamma Transformations) là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q7"><label class="form-check-label">A. $s = c \log(1 + r)$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q7"><label class="form-check-label">B. $s = L – 1 – r$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q7"><label class="form-check-label">C. $s = c r^\gamma$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q7"><label class="form-check-label">D. $s = M N / n_k$</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là công thức chuẩn của Biến đổi Luật Lũy Thừa, hay còn gọi là Hiệu chỉnh Gamma (Gamma Correction).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
-            
-            <div class="question-card">
-                <div class="question-header">Câu 10</div>
-                <div class="question-body">
-                    <div class="question-text">Mục đích chính của kỹ thuật Kéo giãn Độ tương phản (Contrast Stretching) là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q10" id="q10a"><label class="form-check-label" for="q10a">A. Nén dải cường độ động của ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q10" id="q10b"><label class="form-check-label" for="q10b">B. Thay thế giá trị điểm ảnh bằng giá trị trung vị (median).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q10" id="q10c"><label class="form-check-label" for="q10c">C. Mở rộng phạm vi mức cường độ trong ảnh để nó phủ hết dải cường độ đầy đủ của thiết bị hiển thị.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q10" id="q10d"><label class="form-check-label" for="q10d">D. Tạo ra ảnh nhị phân.</label></div>
-                </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 8</div>
+            <div class="question-body">
+                <div class="question-text">Trong Biến đổi Luật Lũy Thừa $s = c r^\gamma$, nếu giá trị $\gamma < 1$ (ví dụ $\gamma = 0.4$), thì phép biến đổi này có tác dụng gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q8"><label class="form-check-label">A. Nén dải cường độ thấp và làm ảnh tối đi.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q8"><label class="form-check-label">B. Mở rộng các giá trị cường độ thấp (dark input values).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q8"><label class="form-check-label">C. Tăng cường các giá trị cường độ cao.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q8"><label class="form-check-label">D. Trở thành phép biến đổi đồng nhất (identity transformation).</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Khi $\gamma < 1$, đường cong biến đổi sẽ cong lên, tương tự như hàm logarit. Nó ánh xạ một dải hẹp các giá trị tối thành một dải rộng hơn ở đầu ra, làm cho ảnh sáng hơn và tăng cường chi tiết vùng tối. Thường dùng cho ảnh bị tối (underexposed).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 9</div>
+            <div class="question-body">
+                <div class="question-text">Khi ảnh bị mờ hoặc quá sáng (washed-out appearance), người ta nên sử dụng giá trị $\gamma$ như thế nào trong Biến đổi Luật Lũy Thừa để nén các mức cường độ?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q9"><label class="form-check-label">A. $\gamma = 1$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q9"><label class="form-check-label">B. $\gamma < 1$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q9"><label class="form-check-label">C. $\gamma > 1$ (ví dụ: $\gamma = 3.0, 4.0, 5.0$).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q9"><label class="form-check-label">D. $\gamma$ phải là một số âm.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 11</div>
-                <div class="question-body">
-                    <div class="question-text">Kéo giãn Độ tương phản thường được sử dụng để xử lý loại ảnh nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q11" id="q11a"><label class="form-check-label" for="q11a">A. Ảnh có độ tương phản cao.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q11" id="q11b"><label class="form-check-label" for="q11b">B. Ảnh có độ tương phản thấp do thiếu dải động hoặc chiếu sáng kém.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q11" id="q11c"><label class="form-check-label" for="q11c">C. Ảnh âm bản.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q11" id="q11d"><label class="form-check-label" for="q11d">D. Ảnh đã cân bằng histogram.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Khi $\gamma > 1$, đường cong biến đổi sẽ cong xuống. Nó nén các giá trị cường độ cao (vùng sáng) lại, làm cho ảnh tối đi và giảm bớt độ "chói" hay "lóa". Thường dùng cho ảnh bị quá sáng (overexposed).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 10</div>
+            <div class="question-body">
+                <div class="question-text">Mục đích chính của kỹ thuật Kéo giãn Độ tương phản (Contrast Stretching) là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q10"><label class="form-check-label">A. Nén dải cường độ động của ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q10"><label class="form-check-label">B. Thay thế giá trị điểm ảnh bằng giá trị trung vị (median).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q10"><label class="form-check-label">C. Mở rộng phạm vi mức cường độ trong ảnh để nó phủ hết dải cường độ đầy đủ của thiết bị hiển thị.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q10"><label class="form-check-label">D. Tạo ra ảnh nhị phân.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 12</div>
-                <div class="question-body">
-                    <div class="question-text">Phép biến đổi nào sau đây thuộc nhóm Phép biến đổi tuyến tính từng phần (Piecewise-Linear Transformation)?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q12" id="q12a"><label class="form-check-label" for="q12a">A. Negative Image.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q12" id="q12b"><label class="form-check-label" for="q12b">B. Log Transformation.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q12" id="q12c"><label class="form-check-label" for="q12c">C. Intensity Level Slicing (Lát cắt mức cường độ).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q12" id="q12d"><label class="form-check-label" for="q12d">D. Convolution.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây chính là định nghĩa của Contrast Stretching. Nó lấy dải cường độ hẹp hiện tại (ví dụ: [50, 150]) và "kéo giãn" nó ra toàn bộ dải (ví dụ: [0, 255]) để tăng độ tương phản.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 11</div>
+            <div class="question-body">
+                <div class="question-text">Kéo giãn Độ tương phản thường được sử dụng để xử lý loại ảnh nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q11"><label class="form-check-label">A. Ảnh có độ tương phản cao.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q11"><label class="form-check-label">B. Ảnh có độ tương phản thấp do thiếu dải động hoặc chiếu sáng kém.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q11"><label class="form-check-label">C. Ảnh âm bản.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q11"><label class="form-check-label">D. Ảnh đã cân bằng histogram.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 13</div>
-                <div class="question-body">
-                    <div class="question-text">Kỹ thuật Intensity Level Slicing được sử dụng để làm gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q13" id="q13a"><label class="form-check-label" for="q13a">A. Giảm nhiễu muối tiêu.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q13" id="q13b"><label class="form-check-label" for="q13b">B. Điều chỉnh gamma.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q13" id="q13c"><label class="form-check-label" for="q13c">C. Làm nổi bật một phạm vi cường độ cụ thể (Highlighting specific range of intensities).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q13" id="q13d"><label class="form-check-label" for="q13d">D. Tính đạo hàm bậc hai của ảnh.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Ảnh có độ tương phản thấp (low-contrast) là ảnh mà histogram của nó bị co cụm trong một phạm vi hẹp. Kéo giãn độ tương phản được thiết kế để khắc phục chính vấn đề này.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 12</div>
+            <div class="question-body">
+                <div class="question-text">Phép biến đổi nào sau đây thuộc nhóm Phép biến đổi tuyến tính từng phần (Piecewise-Linear Transformation)?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q12"><label class="form-check-label">A. Negative Image.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q12"><label class="form-check-label">B. Log Transformation.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q12"><label class="form-check-label">C. Intensity Level Slicing (Lát cắt mức cường độ).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q12"><label class="form-check-label">D. Convolution.</label></div>
 
-            <h3 class="h4 mt-5 mb-3" style="color: #004a99; font-weight:700;">PHẦN II: KỸ THUẬT LÁT CẮT MẶT PHẲNG BIT</h3>
-
-            <div class="question-card">
-                <div class="question-header">Câu 14</div>
-                <div class="question-body">
-                    <div class="question-text">Một ảnh thang xám 8-bit có thể được coi là bao gồm bao nhiêu mặt phẳng bit (bit planes)?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q14" id="q14a"><label class="form-check-label" for="q14a">A. 4.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q14" id="q14b"><label class="form-check-label" for="q14b">B. 7.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q14" id="q14c"><label class="form-check-label" for="q14c">C. 8.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q14" id="q14d"><label class="form-check-label" for="q14d">D. 256.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Biến đổi tuyến tính từng phần (Piecewise-Linear) được định nghĩa bởi nhiều đoạn thẳng. Contrast Stretching và Intensity Level Slicing là hai ví dụ điển hình thuộc nhóm này. Negative Image là tuyến tính (nhưng không phải *từng phần*), Log và Gamma là phi tuyến (non-linear).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 15</div>
-                <div class="question-body">
-                    <div class="question-text">Trong ảnh thang xám 8-bit, Mặt phẳng bit 1 (Plane 1) chứa thông tin nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q15" id="q15a"><label class="form-check-label" for="q15a">A. Các bit bậc cao nhất (highest-order bits).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q15" id="q15b"><label class="form-check-label" for="q15b">B. Các bit bậc thứ 8.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q15" id="q15c"><label class="form-check-label" for="q15c">C. Các bit liên quan đến cường độ màu.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q15" id="q15d"><label class="form-check-label" for="q15d">D. Các bit bậc thấp nhất (lowest-order bit) của tất cả các điểm ảnh.</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 13</div>
+            <div class="question-body">
+                <div class="question-text">Kỹ thuật Intensity Level Slicing được sử dụng để làm gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q13"><label class="form-check-label">A. Giảm nhiễu muối tiêu.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q13"><label class="form-check-label">B. Điều chỉnh gamma.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q13"><label class="form-check-label">C. Làm nổi bật một phạm vi cường độ cụ thể (Highlighting specific range of intensities).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q13"><label class="form-check-label">D. Tính đạo hàm bậc hai của ảnh.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là mục đích chính của Slicing. Kỹ thuật này cho phép làm sáng (hoặc tối) một dải cường độ quan tâm (ví dụ: khối nước trong ảnh vệ tinh) trong khi giữ nguyên hoặc giảm các dải khác.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 16</div>
-                <div class="question-body">
-                    <div class="question-text">Mặt phẳng bit nào thường chứa hầu hết thông tin thị giác quan trọng của ảnh?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q16" id="q16a"><label class="form-check-label" for="q16a">A. Mặt phẳng bit bậc thấp nhất (Plane 1).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q16" id="q16b"><label class="form-check-label" for="q16b">B. Mặt phẳng bit bậc thấp (Plane 2, 3).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q16" id="q16c"><label class="form-check-label" for="q16c">C. Mặt phẳng bit bậc cao nhất (ví dụ: Plane 8).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q16" id="q16d"><label class="form-check-label" for="q16d">D. Tất cả các mặt phẳng bit chứa lượng thông tin thị giác ngang nhau.</label></div>
-                </div>
+        <h3 class="h4 mt-5 mb-3" style="color: #004a99; font-weight:700;">PHẦN II: KỸ THUẬT LÁT CẮT MẶT PHẲNG BIT</h3>
+
+        <div class="question-card">
+            <div class="question-header">Câu 14</div>
+            <div class="question-body">
+                <div class="question-text">Một ảnh thang xám 8-bit có thể được coi là bao gồm bao nhiêu mặt phẳng bit (bit planes)?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q14"><label class="form-check-label">A. 4.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q14"><label class="form-check-label">B. 7.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q14"><label class="form-check-label">C. 8.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q14"><label class="form-check-label">D. 256.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Ảnh 8-bit biểu diễn mỗi pixel bằng 8 bit. Mỗi bit này (từ bit 0 đến bit 7) tương ứng với một mặt phẳng bit 1-bit. Do đó, có 8 mặt phẳng bit.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 17</div>
-                <div class="question-body">
-                    <div class="question-text">Mục đích của kỹ thuật Lát cắt Mặt phẳng bit là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q17" id="q17a"><label class="form-check-label" for="q17a">A. Giảm kích thước ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q17" id="q17b"><label class="form-check-label" for="q17b">B. Làm nổi bật đóng góp của các bit cụ thể vào hình dáng tổng thể của ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q17" id="q17c"><label class="form-check-label" for="q17c">C. Cân bằng histogram.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q17" id="q17d"><label class="form-check-label" for="q17d">D. Xóa bỏ nhiễu Salt-and-pepper.</label></div>
-                </div>
+        <div class="question-card">
+            <div class="question-header">Câu 15</div>
+            <div class="question-body">
+                <div class="question-text">Trong ảnh thang xám 8-bit, Mặt phẳng bit 1 (Plane 1) chứa thông tin nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q15"><label class="form-check-label">A. Các bit bậc cao nhất (highest-order bits).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q15"><label class="form-check-label">B. Các bit bậc thứ 8.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q15"><label class="form-check-label">C. Các bit liên quan đến cường độ màu.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q15"><label class="form-check-label">D. Các bit bậc thấp nhất (lowest-order bit) của tất cả các điểm ảnh.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: D</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Theo quy ước, Mặt phẳng 1 (Plane 1) chứa bit bậc thấp nhất (Least Significant Bit - LSB), tương ứng với bit $2^0$. Mặt phẳng 8 (Plane 8) chứa bit bậc cao nhất (Most Significant Bit - MSB), tương ứng với bit $2^7$.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <h3 class="h4 mt-5 mb-3" style="color: #004a99; font-weight:700;">PHẦN III: KỸ THUẬT CÂN BẰNG HISTOGRAM</h3>
+        <div class="question-card">
+            <div class="question-header">Câu 16</div>
+            <div class="question-body">
+                <div class="question-text">Mặt phẳng bit nào thường chứa hầu hết thông tin thị giác quan trọng của ảnh?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q16"><label class="form-check-label">A. Mặt phẳng bit bậc thấp nhất (Plane 1).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q16"><label class="form-check-label">B. Mặt phẳng bit bậc thấp (Plane 2, 3).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q16"><label class="form-check-label">C. Mặt phẳng bit bậc cao nhất (ví dụ: Plane 8).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q16"><label class="form-check-label">D. Tất cả các mặt phẳng bit chứa lượng thông tin thị giác ngang nhau.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 18</div>
-                <div class="question-body">
-                    <div class="question-text">Định nghĩa Histogram $h(r_k)$ của một ảnh số với mức cường độ $r_k$ là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q18" id="q18a"><label class="form-check-label" for="q18a">A. Xác suất xảy ra mức cường độ $r_k$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q18" id="q18b"><label class="form-check-label" for="q18b">B. Tổng số mức cường độ trong ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q18" id="q18c"><label class="form-check-label" for="q18c">C. Là hàm rời rạc bằng $n_k$, trong đó $n_k$ là số lượng điểm ảnh có cường độ $r_k$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q18" id="q18d"><label class="form-check-label" for="q18d">D. Hàm biến đổi $s = T(r)$.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Các bit bậc cao (MSB) đóng góp nhiều nhất vào giá trị cường độ tổng thể (ví dụ: bit 8 có trọng số $2^7=128$). Do đó, chúng chứa phần lớn thông tin cấu trúc và hình ảnh tổng quan. Các bit bậc thấp (LSB) chủ yếu chứa các chi tiết tinh vi và nhiễu.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 17</div>
+            <div class="question-body">
+                <div class="question-text">Mục đích của kỹ thuật Lát cắt Mặt phẳng bit là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q17"><label class="form-check-label">A. Giảm kích thước ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q17"><label class="form-check-label">B. Làm nổi bật đóng góp của các bit cụ thể vào hình dáng tổng thể của ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q17"><label class="form-check-label">C. Cân bằng histogram.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q17"><label class="form-check-label">D. Xóa bỏ nhiễu Salt-and-pepper.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 19</div>
-                <div class="question-body">
-                    <div class="question-text">Nếu một ảnh có kích thước $M \times N$, công thức tính Normalized Histogram $p(r_k)$ là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q19" id="q19a"><label class="form-check-label" for="q19a">A. $p(r_k) = n_k \times MN$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q19" id="q19b"><label class="form-check-label" for="q19b">B. $p(r_k) = L – 1 – r_k$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q19" id="q19c"><label class="form-check-label" for="q19c">C. $p(r_k) = \frac{n_k}{MN}$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q19" id="q19d"><label class="form-check-label" for="q19d">D. $p(r_k) = \sum_{j=0}^{k} p(r_j)$</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là định nghĩa về mục đích của Bit Plane Slicing. Kỹ thuật này cho phép phân tích tầm quan trọng tương đối của từng bit, hữu ích trong nén ảnh và thủy ấn (watermarking).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 20</div>
-                <div class="question-body">
-                    <div class="question-text">Nếu histogram của một ảnh có xu hướng tập trung ở phía cường độ thấp (gần 0), ảnh đó được mô tả là loại ảnh gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q20" id="q20a"><label class="form-check-label" for="q20a">A. Ảnh sáng (light image).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q20" id="q20b"><label class="form-check-label" for="q20b">B. Ảnh có độ tương phản cao (high contrast).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q20" id="q20c"><label class="form-check-label" for="q20c">C. Ảnh tối (dark image).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q20" id="q20d"><label class="form-check-label" for="q20d">D. Ảnh có độ tương phản thấp (low contrast).</label></div>
-                </div>
-            </div>
+        <h3 class="h4 mt-5 mb-3" style="color: #004a99; font-weight:700;">PHẦN III: KỸ THUẬT CÂN BẰNG HISTOGRAM</h3>
 
-            <div class="question-card">
-                <div class="question-header">Câu 21</div>
-                <div class="question-body">
-                    <div class="question-text">Cân bằng Histogram (Histogram Equalization) được coi là một trong những phương pháp tốt nhất để làm gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q21" id="q21a"><label class="form-check-label" for="q21a">A. Thực hiện lọc thông thấp (lowpass filtering).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q21" id="q21b"><label class="form-check-label" for="q21b">B. Tăng cường chất lượng ảnh (image enhancement).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q21" id="q21c"><label class="form-check-label" for="q21c">C. Thay đổi hình học của ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q21" id="q21d"><label class="form-check-label" for="q21d">D. Giảm số lượng mức cường độ.</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 18</div>
+            <div class="question-body">
+                <div class="question-text">Định nghĩa Histogram $h(r_k)$ của một ảnh số với mức cường độ $r_k$ là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q18"><label class="form-check-label">A. Xác suất xảy ra mức cường độ $r_k$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q18"><label class="form-check-label">B. Tổng số mức cường độ trong ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q18"><label class="form-check-label">C. Là hàm rời rạc bằng $n_k$, trong đó $n_k$ là số lượng điểm ảnh có cường độ $r_k$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q18"><label class="form-check-label">D. Hàm biến đổi $s = T(r)$.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 22</div>
-                <div class="question-body">
-                    <div class="question-text">Mục tiêu của Cân bằng Histogram là biến đổi phân bố cường độ điểm ảnh đầu vào thành phân bố cường độ đầu ra có hình dạng như thế nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q22" id="q22a"><label class="form-check-label" for="q22a">A. Phân bố Gaussian.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q22" id="q22b"><label class="form-check-label" for="q22b">B. Phân bố Logarit.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q22" id="q22c"><label class="form-check-label" for="q22c">C. Phân bố đồng nhất (uniform histogram).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q22" id="q22d"><label class="form-check-label" for="q22d">D. Phân bố tập trung ở vùng tối.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là định nghĩa cơ bản của histogram. Nó là một biểu đồ tần suất, đếm số lần xuất hiện của mỗi mức cường độ $r_k$. Đáp án A là định nghĩa của Normalized Histogram $p(r_k)$.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 23</div>
-                <div class="question-body">
-                    <div class="question-text">Hàm biến đổi $s = T(r)$ trong Cân bằng Histogram phải là một hàm tăng đơn điệu (monotonically increasing) trong khoảng $[0, L-1]$ để đảm bảo điều gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q23" id="q23a"><label class="form-check-label" for="q23a">A. Giảm nhiễu trong ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q23" id="q23b"><label class="form-check-label" for="q23b">B. Bảo toàn thứ tự mức cường độ (nghĩa là mức cường độ sáng hơn vẫn sáng hơn).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q23" id="q23c"><label class="form-check-label" for="q23c">C. Tạo ra ảnh tối hơn.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q23" id="q23d"><label class="form-check-label" for="q23d">D. Cho phép phép biến đổi đảo ngược (inverse transformation).</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 19</div>
+            <div class="question-body">
+                <div class="question-text">Nếu một ảnh có kích thước $M \times N$, công thức tính Normalized Histogram $p(r_k)$ là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q19"><label class="form-check-label">A. $p(r_k) = n_k \times MN$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q19"><label class="form-check-label">B. $p(r_k) = L – 1 – r_k$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q19"><label class="form-check-label">C. $p(r_k) = \frac{n_k}{MN}$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q19"><label class="form-check-label">D. $p(r_k) = \sum_{j=0}^{k} p(r_j)$</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 24</div>
-                <div class="question-body">
-                    <div class="question-text">Hàm biến đổi $s = T(r)$ trong Cân bằng Histogram phải thỏa mãn điều kiện $0 \leq T(r) \leq L-1$ cho $0 \leq r \leq L-1$ để đảm bảo điều gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q24" id="q24a"><label class="form-check-label" for="q24a">A. Hàm biến đổi là hàm logarit.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q24" id="q24b"><label class="form-check-label" for="q24b">B. Giá trị cường độ đầu ra nằm trong dải cường độ cho phép.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q24" id="q24c"><label class="form-check-label" for="q24c">C. Chỉ áp dụng cho ảnh nhị phân.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q24" id="q24d"><label class="form-check-label" for="q24d">D. Tăng độ tương phản.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Normalized Histogram (Lược đồ chuẩn hóa) được tính bằng cách chia số lượng pixel ở mỗi mức ($n_k$) cho tổng số pixel ($MN$). Kết quả là một ước tính xác suất (PDF) của các mức cường độ.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 25</div>
-                <div class="question-body">
-                    <div class="question-text">Công thức tính mức cường độ đầu ra rời rạc $s_k$ cho Cân bằng Histogram, sử dụng Normalized Histogram $p(r_j) = n_j / MN$, là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q25" id="q25a"><label class="form-check-label" for="q25a">A. $s_k = L – 1 – r_k$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q25" id="q25b"><label class="form-check-label" for="q25b">B. $s_k = (L-1) \cdot p(r_k)$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q25" id="q25c"><label class="form-check-label" for="q25c">C. $s_k = (L-1) \sum_{j=0}^{k} p(r_j)$</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q25" id="q25d"><label class="form-check-label" for="q25d">D. $s_k = c r_k^\gamma$</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 20</div>
+            <div class="question-body">
+                <div class="question-text">Nếu histogram của một ảnh có xu hướng tập trung ở phía cường độ thấp (gần 0), ảnh đó được mô tả là loại ảnh gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q20"><label class="form-check-label">A. Ảnh sáng (light image).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q20"><label class="form-check-label">B. Ảnh có độ tương phản cao (high contrast).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q20"><label class="form-check-label">C. Ảnh tối (dark image).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q20"><label class="form-check-label">D. Ảnh có độ tương phản thấp (low contrast).</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 26</div>
-                <div class="question-body">
-                    <div class="question-text">Histogram Matching (hoặc Specification) khác Cân bằng Histogram ở điểm nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q26" id="q26a"><label class="form-check-label" for="q26a">A. Histogram Matching chỉ được sử dụng cho ảnh nhị phân.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q26" id="q26b"><label class="form-check-label" for="q26b">B. Histogram Equalization tạo ra histogram đồng nhất, trong khi Histogram Matching cho phép chỉ định hình dạng histogram đầu ra mong muốn.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q26" id="q26c"><label class="form-check-label" for="q26c">C. Histogram Matching chỉ hoạt động trong miền tần số.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q26" id="q26d"><label class="form-check-label" for="q26d">D. Cân bằng Histogram được thực hiện cục bộ (Local).</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Cường độ thấp (gần 0) tương ứng với màu tối (đen). Nếu histogram tập trung ở đây, có nghĩa là phần lớn các pixel trong ảnh đều tối.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 27</div>
-                <div class="question-body">
-                    <div class="question-text">Trong quy trình Cân bằng Histogram, tổng $\sum_{j=0}^{k} p(r_j)$ được gọi là gì trong lý thuyết xác suất?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q27" id="q27a"><label class="form-check-label" for="q27a">A. Hàm mật độ xác suất (PDF).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q27" id="q27b"><label class="form-check-label" for="q27b">B. Hàm đơn điệu tăng.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q27" id="q27c"><label class="form-check-label" for="q27c">C. Hàm phân phối tích lũy (Cumulative Distribution Function - CDF).</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q27" id="q27d"><label class="form-check-label" for="q27d">D. Normalized Histogram.</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 21</div>
+            <div class="question-body">
+                <div class="question-text">Cân bằng Histogram (Histogram Equalization) được coi là một trong những phương pháp tốt nhất để làm gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q21"><label class="form-check-label">A. Thực hiện lọc thông thấp (lowpass filtering).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q21"><label class="form-check-label">B. Tăng cường chất lượng ảnh (image enhancement).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q21"><label class="form-check-label">C. Thay đổi hình học của ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q21"><label class="form-check-label">D. Giảm số lượng mức cường độ.</label></div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 28</div>
-                <div class="question-body">
-                    <div class="question-text">Trong Cân bằng Histogram, kết quả cuối cùng là các giá trị $s_k$ phải được làm tròn (rounded) về dải số nguyên nào?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q28" id="q28a"><label class="form-check-label" for="q28a">A. $[0, 1]$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q28" id="q28b"><label class="form-check-label" for="q28b">B. $[0, L]$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q28" id="q28c"><label class="form-check-label" for="q28c">C. $[0, L-1]$.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q28" id="q28d"><label class="form-check-label" for="q28d">D. $[-1, 1]$.</label></div>
-                </div>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Theo tài liệu (Chương 2), Cân bằng Histogram là một trong những phương pháp tốt nhất để nâng cao chất lượng ảnh, cụ thể là tăng độ tương phản toàn cục (global contrast).</p>
+                        </div>
+                    </div>
+                </details>
             </div>
-            
-            <div class="question-card">
-                <div class="question-header">Câu 29</div>
-                <div class="question-body">
-                    <div class="question-text">Các phương pháp Xử lý Histogram truyền thống (như Equalization hay Matching) được thảo luận trong nguồn là phương pháp Toàn cục (Global). Điều này có nghĩa là gì?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q29" id="q29a"><label class="form-check-label" for="q29a">A. Chỉ áp dụng cho ảnh lớn.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q29" id="q29b"><label class="form-check-label" for="q29b">B. Các điểm ảnh được sửa đổi dựa trên hàm biến đổi dựa trên phân bố cường độ của TOÀN BỘ ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q29" id="q29c"><label class="form-check-label" for="q29c">C. Sử dụng nhiều bộ lọc không gian.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q29" id="q29d"><label class="form-check-label" for="q29d">D. Thao tác trên từng mặt phẳng bit riêng lẻ.</label></div>
-                </div>
-            </div>
+        </div>
 
-            <div class="question-card">
-                <div class="question-header">Câu 30</div>
-                <div class="question-body">
-                    <div class="question-text">Khi nào cần sử dụng Xử lý Histogram Cục bộ (Local Histogram Processing) thay vì phương pháp Toàn cục?</div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q30" id="q30a"><label class="form-check-label" for="q30a">A. Khi ảnh có độ tương phản tổng thể tốt.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q30" id="q30b"><label class="form-check-label" for="q30b">B. Khi muốn giảm chi phí tính toán.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q30" id="q30c"><label class="form-check-label" for="q30c">C. Khi cần tăng cường chi tiết trên các vùng nhỏ (small areas) trong ảnh.</label></div>
-                    <div class="form-check"><input class="form-check-input" type="radio" name="q30" id="q30d"><label class="form-check-label" for="q30d">D. Khi cần tạo ra histogram đồng nhất trên toàn ảnh.</label></div>
-                </div>
-            </div>
+        <div class="question-card">
+            <div class="question-header">Câu 22</div>
+            <div class="question-body">
+                <div class="question-text">Mục tiêu của Cân bằng Histogram là biến đổi phân bố cường độ điểm ảnh đầu vào thành phân bố cường độ đầu ra có hình dạng như thế nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q22"><label class="form-check-label">A. Phân bố Gaussian.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q22"><label class="form-check-label">B. Phân bố Logarit.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q22"><label class="form-check-label">C. Phân bố đồng nhất (uniform histogram).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q22"><label class="form-check-label">D. Phân bố tập trung ở vùng tối.</label></div>
 
-            <div class="submit-button">
-                <button type="button" class="btn btn-primary btn-lg">Nộp Bài Kiểm Tra</button>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Mục tiêu lý tưởng của Cân bằng Histogram là "trải đều" histogram ra, sao cho mỗi mức cường độ có số lượng pixel xấp xỉ bằng nhau, tạo ra một phân bố đồng nhất.</p>
+                        </div>
+                    </div>
+                </details>
             </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 23</div>
+            <div class="question-body">
+                <div class="question-text">Hàm biến đổi $s = T(r)$ trong Cân bằng Histogram phải là một hàm tăng đơn điệu (monotonically increasing) trong khoảng $[0, L-1]$ để đảm bảo điều gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q23"><label class="form-check-label">A. Giảm nhiễu trong ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q23"><label class="form-check-label">B. Bảo toàn thứ tự mức cường độ (nghĩa là mức cường độ sáng hơn vẫn sáng hơn).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q23"><label class="form-check-label">C. Tạo ra ảnh tối hơn.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q23"><label class="form-check-label">D. Cho phép phép biến đổi đảo ngược (inverse transformation).</label></div>
 
-        </form>
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Điều kiện tăng đơn điệu (monotonically increasing) đảm bảo rằng mối quan hệ tương đối về độ sáng giữa các pixel được giữ nguyên. Pixel tối không thể trở nên sáng hơn pixel sáng ban đầu, tránh việc đảo ngược (negative) ảnh.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 24</div>
+            <div class="question-body">
+                <div class="question-text">Hàm biến đổi $s = T(r)$ trong Cân bằng Histogram phải thỏa mãn điều kiện $0 \leq T(r) \leq L-1$ cho $0 \leq r \leq L-1$ để đảm bảo điều gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q24"><label class="form-check-label">A. Hàm biến đổi là hàm logarit.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q24"><label class="form-check-label">B. Giá trị cường độ đầu ra nằm trong dải cường độ cho phép.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q24"><label class="form-check-label">C. Chỉ áp dụng cho ảnh nhị phân.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q24"><label class="form-check-label">D. Tăng độ tương phản.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Hàm biến đổi phải ánh xạ dải đầu vào $[0, L-1]$ vào chính dải đó ở đầu ra. Nếu không, các giá trị pixel đầu ra sẽ nằm ngoài phạm vi hiển thị (ví dụ: > 255), gây mất mát thông tin.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 25</div>
+            <div class="question-body">
+                <div class="question-text">Công thức tính mức cường độ đầu ra rời rạc $s_k$ cho Cân bằng Histogram, sử dụng Normalized Histogram $p(r_j) = n_j / MN$, là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q25"><label class="form-check-label">A. $s_k = L – 1 – r_k$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q25"><label class="form-check-label">B. $s_k = (L-1) \cdot p(r_k)$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q25"><label class="form-check-label">C. $s_k = (L-1) \sum_{j=0}^{k} p(r_j)$</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q25"><label class="form-check-label">D. $s_k = c r_k^\gamma$</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Đây là công thức biến đổi rời rạc cho Cân bằng Histogram. Nó dựa trên Hàm Phân phối Tích lũy (CDF), $\sum p(r_j)$, được nhân với giá trị tối đa $(L-1)$ để đưa về đúng thang đo cường độ.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 26</div>
+            <div class="question-body">
+                <div class="question-text">Histogram Matching (hoặc Specification) khác Cân bằng Histogram ở điểm nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q26"><label class="form-check-label">A. Histogram Matching chỉ được sử dụng cho ảnh nhị phân.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q26"><label class="form-check-label">B. Histogram Equalization tạo ra histogram đồng nhất, trong khi Histogram Matching cho phép chỉ định hình dạng histogram đầu ra mong muốn.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q26"><label class="form-check-label">C. Histogram Matching chỉ hoạt động trong miền tần số.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q26"><label class="form-check-label">D. Cân bằng Histogram được thực hiện cục bộ (Local).</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Cân bằng (Equalization) là một trường hợp đặc biệt của Khớp (Matching), nơi mà histogram mục tiêu là một histogram đồng nhất (uniform). Matching cho phép người dùng kiểm soát chính xác hình dạng histogram của ảnh kết quả.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 27</div>
+            <div class="question-body">
+                <div class="question-text">Trong quy trình Cân bằng Histogram, tổng $\sum_{j=0}^{k} p(r_j)$ được gọi là gì trong lý thuyết xác suất?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q27"><label class="form-check-label">A. Hàm mật độ xác suất (PDF).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q27"><label class="form-check-label">B. Hàm đơn điệu tăng.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q27"><label class="form-check-label">C. Hàm phân phối tích lũy (Cumulative Distribution Function - CDF).</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q27"><label class="form-check-label">D. Normalized Histogram.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>$p(r_j)$ là Hàm mật độ xác suất (PDF). Phép tổng tích lũy của PDF (tổng xác suất từ đầu đến một điểm $k$) chính là định nghĩa của Hàm phân phối tích lũy (CDF).</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">Câu 28</div>
+            <div class="question-body">
+                <div class="question-text">Trong Cân bằng Histogram, kết quả cuối cùng là các giá trị $s_k$ phải được làm tròn (rounded) về dải số nguyên nào?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q28"><label class="form-check-label">A. $[0, 1]$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q28"><label class="form-check-label">B. $[0, L]$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q28"><label class="form-check-label">C. $[0, L-1]$.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q28"><label class="form-check-label">D. $[-1, 1]$.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Vì $s_k$ là giá trị cường độ của pixel đầu ra, nó phải nằm trong dải cường độ hợp lệ của ảnh, tức là từ 0 đến $L-1$ (ví dụ: 0 đến 255). Do đó, kết quả của phép tính CDF nhân $(L-1)$ phải được làm tròn về số nguyên gần nhất trong dải này.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 29</div>
+            <div class="question-body">
+                <div class="question-text">Các phương pháp Xử lý Histogram truyền thống (như Equalization hay Matching) được thảo luận trong nguồn là phương pháp Toàn cục (Global). Điều này có nghĩa là gì?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q29"><label class="form-check-label">A. Chỉ áp dụng cho ảnh lớn.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q29"><label class="form-check-label">B. Các điểm ảnh được sửa đổi dựa trên hàm biến đổi dựa trên phân bố cường độ của TOÀN BỘ ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q29"><label class="form-check-label">C. Sử dụng nhiều bộ lọc không gian.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q29"><label class="form-check-label">D. Thao tác trên từng mặt phẳng bit riêng lẻ.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: B</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Toàn cục (Global) có nghĩa là hàm biến đổi $T(r)$ được tính toán dựa trên histogram của toàn bộ ảnh, và sau đó hàm $T(r)$ này được áp dụng cho mọi pixel trong ảnh.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <div class="question-header">Câu 30</div>
+            <div class="question-body">
+                <div class="question-text">Khi nào cần sử dụng Xử lý Histogram Cục bộ (Local Histogram Processing) thay vì phương pháp Toàn cục?</div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q30"><label class="form-check-label">A. Khi ảnh có độ tương phản tổng thể tốt.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q30"><label class="form-check-label">B. Khi muốn giảm chi phí tính toán.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q30"><label class="form-check-label">C. Khi cần tăng cường chi tiết trên các vùng nhỏ (small areas) trong ảnh.</label></div>
+                <div class="form-check"><input class="form-check-input" type="radio" name="q30"><label class="form-check-label">D. Khi cần tạo ra histogram đồng nhất trên toàn ảnh.</label></div>
+
+                <details class="answer-details">
+                    <summary class="answer-summary"></summary>
+                    <div class="explanation-box">
+                        <p class="correct-answer">Đáp án đúng: C</p>
+                        <div class="explanation">
+                            <h6><i class="bi bi-lightbulb-fill"></i> Giải thích:</h6>
+                            <p>Phương pháp Toàn cục (Global) có thể không hiệu quả với các ảnh mà sự phân bố cường độ thay đổi lớn giữa các vùng. Xử lý Cục bộ (Local) tính toán histogram và hàm biến đổi trên một vùng lân cận nhỏ (ví dụ 7x7) cho từng pixel, điều này cho phép làm nổi bật các chi tiết nhỏ bị ẩn trong các vùng đó.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

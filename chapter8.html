@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chương 3: Khôi phục ảnh – Kỹ thuật lọc nhiễu</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS tùy chỉnh (Nhất quán với các chương trước) */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        /* --- Thanh Sidebar Mục Lục --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar .sidebar-sticky-top {
+            padding: 2rem 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0056b3;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-title .bi {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #555;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0f7;
+            color: #004a99;
+            transform: translateX(5px);
+        }
+        .nav-link .bi {
+            margin-right: 8px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* --- Khu vực Nội dung chính --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: calc(100% - 320px);
+        }
+
+        .lecture-header {
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .lecture-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #004a99;
+        }
+
+        .lecture-header h2 {
+            font-size: 1.7rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .lecturer-info {
+            background-color: #eef2f7;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-size: 0.95rem;
+        }
+        .lecturer-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .content-section h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-section h4 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-section h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        ul li, ol li {
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Bảng */
+        .table {
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: #0056b3;
+            color: white;
+            vertical-align: middle;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8faff;
+        }
+        .table-responsive {
+            margin-top: 1.5rem;
+        }
+        
+        /* Hộp tóm tắt */
+        .summary-box {
+            background: #fffbe6;
+            border-left: 5px solid #ffeb3b;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .summary-box h5 {
+            color: #b8860b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background-color: #e8e8e8;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Đảm bảo công thức MathJax hiển thị tốt */
+        mjx-container {
+            margin: 1rem 0;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        
+        /* --- Cấu hình Responsive --- */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .main-content {
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .lecture-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-sticky-top">
+                <h5 class="sidebar-title">
+                    <i class="bi bi-compass"></i>
+                    MỤC LỤC CHƯƠNG 3
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc1">
+                            <i class="bi bi-chevron-right"></i> I. Mục tiêu Bài giảng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc2">
+                            <i class="bi bi-chevron-right"></i> II. Nội dung chính
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#muc3">
+                            <i class="bi bi-chevron-right"></i> III. Tổng kết và Ứng dụng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="lecture-header">
+                <h1>CHƯƠNG 3: KHÔI PHỤC ẢNH</h1>
+                <h2>KỸ THUẬT LỌC NHIỄU TRONG MIỀN KHÔNG GIAN</h2>
+                
+                <div class="lecturer-info">
+                    <p><strong>Giảng viên:</strong> [Tên người soạn bài giảng]</p>
+                    <p><strong>Thời lượng dự kiến:</strong> 90 phút</p>
+                </div>
+            </header>
+
+            <section id="muc1" class="content-section">
+                <h3>I. MỤC TIÊU BÀI GIẢNG</h3>
+                <p>Sau khi hoàn thành bài giảng này, người học có khả năng:</p>
+                <ul>
+                    <li>Hiểu mô hình thu nhận ảnh và biểu diễn toán học của ảnh bị nhiễu.</li>
+                    <li>Nắm vững công thức đánh giá chất lượng khôi phục ảnh (MSE).</li>
+                    <li>Phân loại được các kỹ thuật loại bỏ nhiễu bằng bộ lọc trong miền không gian thành ba nhóm chính.</li>
+                    <li>Trình bày được nguyên lý hoạt động, công thức tính toán và phạm vi áp dụng hiệu quả của từng loại bộ lọc đối với các loại nhiễu khác nhau (Muối, Hạt tiêu, Gauss).</li>
+                </ul>
+            </section>
+
+            <section id="muc2" class="content-section">
+                <h3>II. NỘI DUNG CHÍNH</h3>
+                
+                <h4>1. Tổng quan về Ảnh bị Nhiễu và Đánh giá Khôi phục</h4>
+                
+                <h5>1.1. Khái niệm và Biểu diễn Ảnh bị Nhiễu</h5>
+                <p>Quá trình thu nhận ảnh số bao gồm nhiều thành phần: nguồn sáng, vật thể, hệ thống nhận ảnh, chuyển đổi thành ảnh số. Trong quá trình thu nhận, nhiễu có thể xảy ra.</p>
+                <p><strong>Biểu diễn ảnh bị nhiễu:</strong> Ảnh bị nhiễu $g(x, y)$ được biểu diễn bằng công thức (1) như sau:</p>
+                $$g(x, y) = f(x, y) + \eta(x, y)$$
+                <p>Trong đó:</p>
+                <ul>
+                    <li>$g(x, y)$ là ảnh bị nhiễu.</li>
+                    <li>$f(x, y)$ là ảnh gốc (ảnh chưa bị nhiễu).</li>
+                    <li>$\eta(x, y)$ là hàm nhiễu.</li>
+                </ul>
+                <p>Mục tiêu của khôi phục ảnh là loại bỏ nhiễu để thu được một ảnh $f_{mũ}(x, y)$ càng gần với ảnh gốc $f(x, y)$ càng tốt.</p>
+
+                <h5>1.2. Đánh giá Chất lượng Khôi phục Ảnh</h5>
+                <p>Để đánh giá chất lượng của việc khôi phục ảnh, người ta sử dụng công thức <strong>Lỗi Bình phương Trung bình (Mean Squared Error - MSE)</strong>, ký hiệu là công thức (2).</p>
+                $$MSE = \frac{1}{M \times N} \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} [f(x, y) - f_{mũ}(x, y)]^2$$
+                <p>Trong đó:</p>
+                <ul>
+                    <li>$f(x, y)$ là ảnh gốc (ảnh chưa bị nhiễu).</li>
+                    <li>$f_{mũ}(x, y)$ là ảnh sau khi khôi phục (đã được loại bỏ nhiễu).</li>
+                </ul>
+                <p><strong>Nguyên tắc đánh giá:</strong> Tham số MSE càng nhỏ thì quá trình khôi phục ảnh càng tốt.</p>
+
+                <h4>2. Phân loại Bộ lọc Khử nhiễu trong miền Không gian</h4>
+                <p>Các phương pháp loại bỏ nhiễu trong miền không gian có thể được chia thành ba nhóm chính:</p>
+                <ol>
+                    <li><strong>Lọc Trung bình (Làm mịn):</strong> Bao gồm Trung bình số học, Hình học, Điều hòa, Điều hòa Đối nghịch.</li>
+                    <li><strong>Lọc theo Thứ tự Thống kê (Order-Statistics):</strong> Bao gồm Lọc Trung vị, Max, Min, Điểm giữa, Trung bình các Alpha.</li>
+                    <li><strong>Lọc Thích nghi (Adaptive Filters).</strong></li>
+                </ol>
+                
+                <h4>3. Chi tiết các Bộ lọc Khử nhiễu</h4>
+                <p>Các bộ lọc trong hai nhóm đầu tiên là hàm tĩnh, tức là các tham số bên trong bộ lọc không thay đổi khi áp dụng cho các đặc điểm ảnh khác nhau.</p>
+
+                <h5>3.1. Nhóm 1: Lọc Trung bình (Mean Filters)</h5>
+                <p>Các bộ lọc này áp dụng công thức cho các tọa độ điểm ảnh $(s, t)$ nằm trong cửa sổ lọc $S_{xy}$ có kích thước $M \times N$ với tâm là $(x, y)$.</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Bộ lọc</th>
+                                <th>Công thức Tính toán</th>
+                                <th>Hiệu quả / Đặc điểm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Lọc Trung bình Số học</strong> (Arithmetic Mean Filter)</td>
+                                <td>$f_{mũ}(x, y) = \frac{1}{M \times N} \sum_{(s, t) \in S_{xy}} g(s, t)$</td>
+                                <td>Đơn giản nhất. Chủ yếu có tác dụng làm mịn ảnh.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Trung bình Hình học</strong> (Geometric Mean Filter)</td>
+                                <td>$f_{mũ}(x, y) = \left[ \prod_{(s, t) \in S_{xy}} g(s, t) \right]^{1/(M \times N)}$</td>
+                                <td>Tương tự làm mịn như lọc số học, nhưng ít làm mất chi tiết của ảnh hơn.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Trung bình Điều hòa</strong> (Harmonic Mean Filter)</td>
+                                <td>$f_{mũ}(x, y) = \frac{M \times N}{\sum_{(s, t) \in S_{xy}} \frac{1}{g(s, t)}}$</td>
+                                <td>Làm việc rất tốt với <strong>nhiễu muối (salt noise)</strong> và nhiễu Gauss. Không hiệu quả cao đối với nhiễu hạt tiêu.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Trung bình Điều hòa Đối nghịch</strong> (Contra-harmonic Mean Filter)</td>
+                                <td>$f_{mũ}(x, y) = \frac{\sum_{(s, t) \in S_{xy}} g(s, t)^{Q+1}}{\sum_{(s, t) \in S_{xy}} g(s, t)^{Q}}$</td>
+                                <td>Hiệu quả phụ thuộc vào bậc $Q$:<br>
+                                    <ul>
+                                        <li>Nếu $Q > 0$: Loại bỏ <strong>nhiễu hạt tiêu</strong> (đen).</li>
+                                        <li>Nếu $Q < 0$: Loại bỏ <strong>nhiễu muối</strong> (trắng).</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5>3.2. Nhóm 2: Lọc theo Thứ tự Thống kê (Order-Statistics Filters)</h5>
+                <p>Các bộ lọc này hoạt động bằng cách sắp xếp thứ tự các giá trị mức xám trong vùng cửa sổ lọc $S_{xy}$.</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Bộ lọc</th>
+                                <th>Nguyên lý</th>
+                                <th>Hiệu quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Lọc Trung vị</strong> (Median Filter)</td>
+                                <td>Tính giá trị trung vị (median) của các điểm ảnh trong vùng $S_{xy}$.</td>
+                                <td><strong>Rất hiệu quả</strong> cho nhiễu muối hoặc nhiễu hạt tiêu (nhiễu xung).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Max</strong> (Max Filter)</td>
+                                <td>Lấy giá trị lớn nhất (Max) của các điểm ảnh trong vùng lọc.</td>
+                                <td>Rất hiệu quả cho <strong>nhiễu hạt tiêu</strong> (lấm chấm màu đen).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Min</strong> (Min Filter)</td>
+                                <td>Lấy giá trị nhỏ nhất (Min) của các điểm ảnh trong vùng lọc.</td>
+                                <td>Rất hiệu quả cho <strong>nhiễu muối</strong> (lấm chấm màu trắng).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Điểm giữa</strong> (Midpoint Filter)</td>
+                                <td>Tính trung bình của giá trị Max và Min trong vùng bộ lọc.</td>
+                                <td>Hiệu quả cho <strong>nhiễu Gauss</strong> (nhiễu đồng nhất/ngẫu nhiên).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lọc Trung bình các Alpha</strong> (Alpha-trimmed Mean)</td>
+                                <td>Loại bỏ $D/2$ pixel sáng nhất và $D/2$ pixel tối nhất, sau đó tính trung bình các pixel còn lại.</td>
+                                <td>Hiệu quả trong loại bỏ <strong>nhiễu hỗn hợp</strong> (ví dụ: muối tiêu + Gauss).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>Chi tiết về Lọc Trung bình các Alpha:</strong></p>
+                <ul>
+                    <li>Số lượng pixel bị loại bỏ $D$ được tính: $D = K^2 \times \alpha$ (với $K^2$ là kích thước lọc, $0 < \alpha < 0.5$).</li>
+                    <li>Quá trình: Sắp xếp các pixel $\rightarrow$ Loại bỏ $D/2$ giá trị nhỏ nhất và $D/2$ giá trị lớn nhất $\rightarrow$ Tính trung bình các giá trị còn lại.</li>
+                </ul>
+
+                <h5>3.3. Nhóm 3: Lọc Thích nghi (Adaptive Filters)</h5>
+                <p>Bộ lọc thích nghi có hành vi thay đổi theo đặc điểm thống kê của ảnh bên trong cửa sổ lọc. Kích thước và tham số của bộ lọc không cố định. Chúng thường có hiệu suất vượt trội.</p>
+                
+                <p><strong>a) Lọc Trung vị Thích nghi (Adaptive Median Filter)</strong></p>
+                <ul>
+                    <li><strong>Nguyên lý:</strong> Kích thước cửa sổ lọc $S_{xy}$ sẽ thay đổi (tăng dần) trong quá trình lọc, tối đa đến kích thước $S_{max}$.</li>
+                    <li><strong>Hiệu quả:</strong> Rất hiệu quả cho cả nhiễu muối và nhiễu hạt tiêu (nhiễu hỗn hợp muối tiêu).</li>
+                    <li><strong>Thuật toán:</strong>
+                        <ul>
+                            <li><strong>Kiểm tra A:</strong> Kiểm tra xem $Z_{med}$ (trung vị) có phải là nhiễu xung không (nếu $Z_{min} < Z_{med} < Z_{max}$). Nếu là nhiễu xung, tăng kích thước cửa sổ và lặp lại.</li>
+                            <li><strong>Kiểm tra B:</strong> Nếu $Z_{med}$ không phải nhiễu xung, kiểm tra xem $Z_{xy}$ (pixel tâm) có phải nhiễu xung không (nếu $Z_{min} < Z_{xy} < Z_{max}$). Nếu $Z_{xy}$ không phải nhiễu, giữ nguyên $Z_{xy}$. Nếu $Z_{xy}$ là nhiễu, thay nó bằng $Z_{med}$.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <p><strong>b) Lọc Nhiễu Cục bộ Thích nghi (Adaptive Local Noise Reduction Filter)</strong></p>
+                <p>Công thức sử dụng là:</p>
+                $$f_{mũ}(x, y) = g(x, y) - \frac{\Delta^2_{\eta}}{\Delta^2_{L}} [g(x, y) - m_{L}]$$
+                <ul>
+                    <li>$\Delta^2_{\eta}$: Phương sai của nhiễu (ước lượng).</li>
+                    <li>$m_{L}$: Giá trị trung bình cục bộ (trong cửa sổ).</li>
+                    <li>$\Delta^2_{L}$: Phương sai cục bộ (trong cửa sổ).</li>
+                </ul>
+                <p><strong>Nguyên tắc:</strong> Nếu phương sai cục bộ $\Delta^2_{L}$ lớn (ví dụ: vùng cạnh), tỷ số $\frac{\Delta^2_{\eta}}{\Delta^2_{L}}$ sẽ nhỏ, và $f_{mũ} \approx g(x, y)$ (bảo toàn cạnh). Nếu $\Delta^2_{L}$ nhỏ (vùng phẳng), tỷ số gần 1, và $f_{mũ} \approx m_{L}$ (làm mịn).</p>
+                <p><strong>Hiệu quả:</strong> Tương đối tốt trong việc loại bỏ nhiễu Gauss và bảo toàn cạnh.</p>
+            </section>
+            
+            <section id="muc3" class="content-section">
+                <h3>III. TỔNG KẾT VÀ ỨNG DỤNG LỌC</h3>
+                <p>Việc lựa chọn bộ lọc phù hợp phụ thuộc vào loại nhiễu đã biết trong ảnh.</p>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Loại Nhiễu</th>
+                                <th>Đặc điểm</th>
+                                <th>Bộ lọc Khuyến nghị (Hiệu quả cao)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nhiễu Muối (Salt Noise)</strong></td>
+                                <td>Điểm ảnh sáng (trắng)</td>
+                                <td>Lọc Min, Lọc Trung bình Điều hòa, Lọc Điều hòa Đối nghịch ($Q < 0$).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nhiễu Hạt tiêu (Pepper Noise)</strong></td>
+                                <td>Điểm ảnh tối (đen)</td>
+                                <td>Lọc Max, Lọc Điều hòa Đối nghịch ($Q > 0$).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nhiễu Xung (Impulse)</strong><br>(Muối & Hạt tiêu)</td>
+                                <td>Hỗn hợp trắng và đen</td>
+                                <td><strong>Lọc Trung vị (Median Filter)</strong>, Lọc Trung vị Thích nghi.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nhiễu Gauss (Rau)</strong></td>
+                                <td>Nhiễu ngẫu nhiên/đồng nhất</td>
+                                <td>Lọc Điểm giữa (Midpoint), Lọc Trung bình Điều hòa, Lọc Nhiễu Cục bộ Thích nghi.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nhiễu Hỗn hợp</strong><br>(Ví dụ: Muối tiêu + Gauss)</td>
+                                <td>Nhiều loại nhiễu cùng tồn tại</td>
+                                <td>Lọc Trung bình các Alpha (Alpha-trimmed).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="summary-box">
+                    <h5><i class="bi bi-bookmark-star-fill"></i> Tóm tắt cốt lõi</h5>
+                    <p>Các bộ lọc làm mịn (Trung bình Số học/Hình học) làm mất chi tiết ảnh. Các bộ lọc Thống kê (Trung vị, Max, Min) hiệu quả với nhiễu xung nhưng có thể không tốt với nhiễu Gauss. Các bộ lọc Thích nghi có hiệu suất vượt trội vì chúng điều chỉnh hành vi theo đặc điểm thống kê cục bộ của ảnh.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
